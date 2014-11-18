@@ -6,6 +6,7 @@
 *~
 .deps
 .libs
+ChangeLog
 INSTALL
 Makefile
 Makefile.in
@@ -48,6 +49,7 @@ gtk-doc/u2f-server.signals
 gtk-doc/u2f-server.types
 gtk-doc/xml/
 libtool
+libu2f-server-*.tar.xz*
 m4/libtool.m4
 m4/ltoptions.m4
 m4/ltsugar.m4
@@ -62,6 +64,7 @@ tests/.deps/
 tests/Makefile
 tests/Makefile.in
 tests/basic
+tests/core
 u2f-server/libu2f-server.la
 u2f-server/u2f-server-version.h
 u2f-server/u2f-server.pc

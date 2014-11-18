@@ -1,0 +1,7 @@
+Author: Yubico
+Basename: libu2f-server
+Homepage: https://developers.yubico.com/libu2f-server/
+License: BSD-2-Clause
+Name: libu2f-server
+Project: libu2f-server
+Summary: Yubico Universal 2nd Factor (U2F) Server C Library

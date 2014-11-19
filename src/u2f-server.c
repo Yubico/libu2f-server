@@ -41,7 +41,6 @@
 int main(int argc, char *argv[])
 {
   int exit_code = EXIT_FAILURE;
-  int read;
   struct gengetopt_args_info args_info;
   char buf[BUFSIZ];
   char *p;
@@ -131,7 +130,7 @@ int main(int argc, char *argv[])
       fclose(fp);
     }
 
-    rc = u2fs_set_publicKey(ctx, buf);
+    rc = u2fs_set_publicKey(ctx, (unsigned char *)buf);
     if (rc != U2FS_OK) {
       printf("error: u2fs_set_publicKey (%d): %s\n", rc,
              u2fs_strerror(rc));

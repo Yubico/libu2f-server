@@ -519,7 +519,7 @@ static void dumpHex(const unsigned char *data, int offs, int len)
  * Parse and validate the registration response.
  */
 static u2fs_rc
-parse_registrationData2(const char *data, size_t len,
+parse_registrationData2(const unsigned char *data, size_t len,
                         unsigned char **user_public_key,
                         size_t * keyHandle_len, char **keyHandle,
                         u2fs_X509_t ** attestation_certificate,
@@ -637,7 +637,7 @@ static u2fs_rc parse_registrationData(const char *registrationData,
 {
   base64_decodestate b64;
   size_t registrationData_len = strlen(registrationData);
-  char *data;
+  unsigned char *data;
   int data_len;
   u2fs_rc rc;
 
@@ -647,7 +647,7 @@ static u2fs_rc parse_registrationData(const char *registrationData,
 
   base64_init_decodestate(&b64);
   data_len =
-      base64_decode_block(registrationData, registrationData_len, data,
+  base64_decode_block(registrationData, registrationData_len, (char *)data,
                           &b64);
 
   if (debug) {
@@ -942,7 +942,7 @@ done:
 }
 
 static u2fs_rc
-parse_signatureData2(const char *data, size_t len,
+parse_signatureData2(const unsigned char *data, size_t len,
                      uint8_t *user_presence, uint32_t **counter,
                      u2fs_ECDSA_t ** signature)
 {
@@ -1000,7 +1000,7 @@ parse_signatureData(const char *signatureData, uint8_t *user_presence,
 
   base64_decodestate b64;
   size_t signatureData_len = strlen(signatureData);
-  char *data;
+  unsigned char *data;
   int data_len;
   u2fs_rc rc;
 
@@ -1009,7 +1009,7 @@ parse_signatureData(const char *signatureData, uint8_t *user_presence,
     return U2FS_MEMORY_ERROR;
 
   base64_init_decodestate(&b64);
-  data_len = base64_decode_block(signatureData, signatureData_len, data,
+  data_len = base64_decode_block(signatureData, signatureData_len, (char *)data,
                                  &b64);
 
   if (debug) {

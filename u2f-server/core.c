@@ -716,6 +716,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   char *origin;
   char *challenge;
   char buf[_B64_BUFSIZE];
+  unsigned char c = 0;
   u2fs_X509_t *attestation_certificate;
   u2fs_ECDSA_t *signature;
   u2fs_rc rc;
@@ -780,7 +781,6 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_done(&sha_ctx, (unsigned char *)challenge_parameter);
 
   unsigned char dgst[U2FS_HASH_LEN];
-  unsigned char c = 0;
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, &c, 1);
   sha256_process(&sha_ctx, (unsigned char *)application_parameter, U2FS_HASH_LEN);

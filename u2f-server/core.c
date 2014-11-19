@@ -1088,7 +1088,6 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   char *keyHandle;
   char *challenge;
   char *origin;
-  size_t keyHandle_len;
   uint8_t user_presence;
   uint32_t counter_num;
   uint32_t *counter;

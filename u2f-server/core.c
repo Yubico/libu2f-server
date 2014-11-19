@@ -789,11 +789,14 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, key);
 
-  if (rc != U2FS_OK)
-    if (rc == U2FS_SIGNATURE_ERROR)
+  if (rc != U2FS_OK) {
+    if (rc == U2FS_SIGNATURE_ERROR) {
       goto failure;
-    else
+    }
+    else {
       return rc;
+    }
+  }
 
   free_sig(signature);
 

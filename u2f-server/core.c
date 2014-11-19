@@ -684,7 +684,7 @@ static u2fs_rc parse_registrationData(const char *registrationData,
 
   if (debug) {
     fprintf(stderr, "registrationData Hex: ");
-    dumpHex(data, 0, data_len);
+    dumpHex((unsigned char *)data, 0, data_len);
   }
 
   rc = parse_registrationData2(data, data_len,

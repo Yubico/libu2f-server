@@ -1093,6 +1093,8 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   uint32_t counter_num;
   uint32_t *counter;
   u2fs_ECDSA_t *signature;
+  int i;
+  int mask;
   u2fs_rc rc;
 
   if (ctx == NULL || response == NULL || output == NULL)
@@ -1139,21 +1141,20 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
       application_parameter[U2FS_HASH_LEN];
 
   sha256_init(&sha_ctx);
-  sha256_process(&sha_ctx, ctx->appid, strlen(ctx->appid));
-  sha256_done(&sha_ctx, application_parameter);
+  sha256_process(&sha_ctx, (unsigned char *)ctx->appid, strlen(ctx->appid));
+  sha256_done(&sha_ctx, (unsigned char *)application_parameter);
 
   sha256_init(&sha_ctx);
-  sha256_process(&sha_ctx, clientData_decoded, strlen(clientData_decoded));
-  sha256_done(&sha_ctx, challenge_parameter);
+  sha256_process(&sha_ctx, (unsigned char *)clientData_decoded, strlen(clientData_decoded));
+  sha256_done(&sha_ctx, (unsigned char *)challenge_parameter);
 
   unsigned char dgst[U2FS_HASH_LEN];
   sha256_init(&sha_ctx);
-  sha256_process(&sha_ctx, application_parameter, U2FS_HASH_LEN);
-  sha256_process(&sha_ctx, &user_presence, 1);
-  sha256_process(&sha_ctx, counter, U2FS_COUNTER_LEN);
-  sha256_process(&sha_ctx, challenge_parameter, U2FS_HASH_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)application_parameter, U2FS_HASH_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)&user_presence, 1);
+  sha256_process(&sha_ctx, (unsigned char *)counter, U2FS_COUNTER_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)challenge_parameter, U2FS_HASH_LEN);
   sha256_done(&sha_ctx, dgst);
-  //dumpHex(dgst, 0, HASH_LEN);
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, ctx->key);
 
@@ -1168,7 +1169,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
     return U2FS_MEMORY_ERROR;
 
 
-  int i, mask = 0x000000FF;
+  mask = 0x000000FF;
   counter_num = 0;
   for (i = U2FS_COUNTER_LEN - 1; i >= 0; i--) {
     counter_num += counter[i] & mask;

@@ -433,9 +433,7 @@ END_TEST START_TEST(authentication_verify_signature_error)
   u2fs_global_done();
 }
 
-END_TEST
-
-Suite *u2fs_suite(void)
+END_TEST Suite *u2fs_suite(void)
 {
   Suite *s;
   TCase *tc_core;

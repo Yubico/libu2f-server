@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
       fclose(fp);
     }
 
-    rc = u2fs_set_publicKey(ctx, (unsigned char *)buf);
+    rc = u2fs_set_publicKey(ctx, (unsigned char *) buf);
     if (rc != U2FS_OK) {
       printf("error: u2fs_set_publicKey (%d): %s\n", rc,
              u2fs_strerror(rc));
@@ -175,7 +175,8 @@ int main(int argc, char *argv[])
     goto done;
   }
   printf("%s\n", p);
-  if (fread(buf, 1, sizeof(buf), stdin) == 0 || !feof(stdin) || ferror(stdin)) {
+  if (fread(buf, 1, sizeof(buf), stdin) == 0 || !feof(stdin)
+      || ferror(stdin)) {
     perror("read");
     exit(EXIT_FAILURE);
   }

@@ -104,14 +104,15 @@ u2fs_rc set_random_bytes(char *data, size_t len)
   if (data == NULL)
     return U2FS_MEMORY_ERROR;
 
-if (RAND_status() != 1 || RAND_bytes((unsigned char*) data, len) != 1)
+  if (RAND_status() != 1 || RAND_bytes((unsigned char *) data, len) != 1)
     return U2FS_CRYPTO_ERROR;
 
   return U2FS_OK;
 
 }
 
-u2fs_rc decode_X509(const unsigned char *data, size_t len, u2fs_X509_t ** cert)
+u2fs_rc decode_X509(const unsigned char *data, size_t len,
+                    u2fs_X509_t ** cert)
 {
 
   const unsigned char *p;
@@ -137,7 +138,8 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len, u2fs_X509_t ** cert)
   return U2FS_OK;
 }
 
-u2fs_rc decode_ECDSA(const unsigned char *data, size_t len, u2fs_ECDSA_t ** sig)
+u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
+                     u2fs_ECDSA_t ** sig)
 {
 
   const unsigned char *p;
@@ -336,7 +338,7 @@ u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
   }
 
   if (EC_POINT_point2oct
-      (ecg, point, pcf, (unsigned char *)*output, U2FS_PUBLIC_KEY_LEN,
+      (ecg, point, pcf, (unsigned char *) *output, U2FS_PUBLIC_KEY_LEN,
        NULL) != U2FS_PUBLIC_KEY_LEN) {
     free(ecg);
     free(*output);

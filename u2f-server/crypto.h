@@ -44,8 +44,10 @@ void free_sig(u2fs_ECDSA_t * sig);
 
 u2fs_rc set_random_bytes(char *data, size_t len);
 
-u2fs_rc decode_X509(const unsigned char *data, size_t len, u2fs_X509_t ** cert);
-u2fs_rc decode_ECDSA(const unsigned char *data, size_t len, u2fs_ECDSA_t ** sig);
+u2fs_rc decode_X509(const unsigned char *data, size_t len,
+                    u2fs_X509_t ** cert);
+u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
+                     u2fs_ECDSA_t ** sig);
 u2fs_rc decode_user_key(const unsigned char *data, u2fs_EC_KEY_t ** key);
 
 u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,

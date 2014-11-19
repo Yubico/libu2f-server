@@ -186,6 +186,11 @@ int main(int argc, char *argv[])
 
     if (rc == U2FS_OK)
       printf("Registration successful\n");
+    else {
+      printf("error: (%d) %s\n", rc, u2fs_strerror(rc));
+      exit(EXIT_FAILURE);
+    }
+      
 
     if (args_info.key_handle_given) {
       FILE *fp;

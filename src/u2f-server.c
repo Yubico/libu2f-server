@@ -175,8 +175,7 @@ int main(int argc, char *argv[])
     goto done;
   }
   printf("%s\n", p);
-  fread(buf, 1, sizeof(buf), stdin);
-  if (!feof(stdin) || ferror(stdin)) {
+  if (fread(buf, 1, sizeof(buf), stdin) == 0 || !feof(stdin) || ferror(stdin)) {
     perror("read");
     exit(EXIT_FAILURE);
   }

@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: Libu2f-server
 Description: Yubico Universal 2nd Factor (U2F) Server C Library
-URL: http://www.yubico.com/
+URL: https://www.yubico.com/
 Version: @VERSION@
 Libs: -L${libdir} -lu2f-server
 Cflags: -I${includedir}/u2f-server

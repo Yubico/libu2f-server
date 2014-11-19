@@ -770,21 +770,21 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
       application_parameter[U2FS_HASH_LEN];
 
   sha256_init(&sha_ctx);
-  sha256_process(&sha_ctx, ctx->appid, strlen(ctx->appid));
-  sha256_done(&sha_ctx, application_parameter);
+  sha256_process(&sha_ctx, (unsigned char *)ctx->appid, strlen(ctx->appid));
+  sha256_done(&sha_ctx, (unsigned char *)application_parameter);
 
   sha256_init(&sha_ctx);
-  sha256_process(&sha_ctx, clientData_decoded, strlen(clientData_decoded));
-  sha256_done(&sha_ctx, challenge_parameter);
+  sha256_process(&sha_ctx, (unsigned char*)clientData_decoded, strlen(clientData_decoded));
+  sha256_done(&sha_ctx, (unsigned char *)challenge_parameter);
 
   unsigned char dgst[U2FS_HASH_LEN];
   unsigned char c = 0;
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, &c, 1);
-  sha256_process(&sha_ctx, application_parameter, U2FS_HASH_LEN);
-  sha256_process(&sha_ctx, challenge_parameter, U2FS_HASH_LEN);
-  sha256_process(&sha_ctx, keyHandle, keyHandle_len);
-  sha256_process(&sha_ctx, user_public_key, U2FS_PUBLIC_KEY_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)application_parameter, U2FS_HASH_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)challenge_parameter, U2FS_HASH_LEN);
+  sha256_process(&sha_ctx, (unsigned char *)keyHandle, keyHandle_len);
+  sha256_process(&sha_ctx, (unsigned char *)user_public_key, U2FS_PUBLIC_KEY_LEN);
   sha256_done(&sha_ctx, dgst);
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, key);

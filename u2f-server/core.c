@@ -700,7 +700,6 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   base64_decodestate b64;
   size_t clientData_len = strlen(clientData);
   char *data;
-  int data_len;
   u2fs_rc rc = 0;
 
   data = calloc(sizeof(char), clientData_len);
@@ -708,7 +707,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
     return U2FS_MEMORY_ERROR;
 
   base64_init_decodestate(&b64);
-  data_len = base64_decode_block(clientData, clientData_len, data, &b64);
+  base64_decode_block(clientData, clientData_len, data, &b64);
 
   if (debug) {
     fprintf(stderr, "clientData: %s\n", data);

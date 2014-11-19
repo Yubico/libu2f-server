@@ -520,7 +520,7 @@ static void dumpHex(const unsigned char *data, int offs, int len)
  */
 static u2fs_rc
 parse_registrationData2(const char *data, size_t len,
-                        char **user_public_key,
+                        unsigned char **user_public_key,
                         size_t * keyHandle_len, char **keyHandle,
                         u2fs_X509_t ** attestation_certificate,
                         u2fs_ECDSA_t ** signature)
@@ -553,13 +553,15 @@ parse_registrationData2(const char *data, size_t len,
     return U2FS_FORMAT_ERROR;
   }
 
-  *user_public_key = strndup(&data[offset], U2FS_PUBLIC_KEY_LEN);
+  *user_public_key = calloc(sizeof(unsigned char), U2FS_PUBLIC_KEY_LEN);
 
   if (*user_public_key == NULL) {
     if (debug)
       fprintf(stderr, "Memory error\n");
     return U2FS_MEMORY_ERROR;
   }
+
+  memcpy(*user_public_key, data + offset, U2FS_PUBLIC_KEY_LEN);
 
   offset += U2FS_PUBLIC_KEY_LEN;
 
@@ -626,7 +628,7 @@ parse_registrationData2(const char *data, size_t len,
 }
 
 static u2fs_rc parse_registrationData(const char *registrationData,
-                                      char **user_public_key,
+                                      unsigned char **user_public_key,
                                       size_t * keyHandle_len,
                                       char **keyHandle,
                                       u2fs_X509_t **
@@ -708,7 +710,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   char *registrationData;
   char *clientData;
   char *clientData_decoded;
-  char *user_public_key;
+  unsigned char *user_public_key;
   size_t keyHandle_len;
   char *keyHandle;
   char *origin;
@@ -784,7 +786,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_process(&sha_ctx, (unsigned char *)application_parameter, U2FS_HASH_LEN);
   sha256_process(&sha_ctx, (unsigned char *)challenge_parameter, U2FS_HASH_LEN);
   sha256_process(&sha_ctx, (unsigned char *)keyHandle, keyHandle_len);
-  sha256_process(&sha_ctx, (unsigned char *)user_public_key, U2FS_PUBLIC_KEY_LEN);
+  sha256_process(&sha_ctx, user_public_key, U2FS_PUBLIC_KEY_LEN);
   sha256_done(&sha_ctx, dgst);
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, key);

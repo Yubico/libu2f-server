@@ -162,7 +162,7 @@ u2fs_rc decode_ECDSA(const char *data, size_t len, u2fs_ECDSA_t ** sig)
   return U2FS_OK;
 }
 
-u2fs_rc decode_user_key(const char *data, u2fs_EC_KEY_t ** key)
+u2fs_rc decode_user_key(const unsigned char *data, u2fs_EC_KEY_t ** key)
 {
 
   if (key == NULL)

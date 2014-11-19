@@ -35,7 +35,7 @@
 #include <string.h>
 
 /* From http://article.gmane.org/gmane.os.freebsd.devel.hackers/23606 */
-int my_strverscmp(const char *s1, const char *s2)
+static int my_strverscmp(const char *s1, const char *s2)
 {
   static const char *digits = "0123456789";
   int ret, lz1, lz2;

@@ -36,7 +36,7 @@
 #include "b64/cdecode.h"
 #include "sha256.h"
 
-static u2fs_rc encode_b64u(const unsigned char *data,
+static u2fs_rc encode_b64u(const char *data,
                            size_t data_len, char *output)
 {
   base64_encodestate b64;

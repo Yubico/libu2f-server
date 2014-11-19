@@ -943,7 +943,7 @@ done:
 
 static u2fs_rc
 parse_signatureData2(const char *data, size_t len,
-                     char *user_presence, char **counter,
+                     uint8_t *user_presence, uint32_t **counter,
                      u2fs_ECDSA_t ** signature)
 {
   /*
@@ -994,8 +994,8 @@ parse_signatureData2(const char *data, size_t len,
 }
 
 static u2fs_rc
-parse_signatureData(const char *signatureData, char *user_presence,
-                    char **counter, u2fs_ECDSA_t ** signature)
+parse_signatureData(const char *signatureData, uint8_t *user_presence,
+                    uint32_t **counter, u2fs_ECDSA_t ** signature)
 {
 
   base64_decodestate b64;
@@ -1014,7 +1014,7 @@ parse_signatureData(const char *signatureData, char *user_presence,
 
   if (debug) {
     fprintf(stderr, "signatureData Hex: ");
-    dumpHex(data, 0, data_len);
+    dumpHex((unsigned char *)data, 0, data_len);
   }
 
   rc = parse_signatureData2(data, data_len, user_presence, counter,
@@ -1091,7 +1091,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   size_t keyHandle_len;
   uint8_t user_presence;
   uint32_t counter_num;
-  char *counter;
+  uint32_t *counter;
   u2fs_ECDSA_t *signature;
   u2fs_rc rc;
 

@@ -236,23 +236,6 @@ u2fs_set_publicKey(u2fs_ctx_t * ctx, const unsigned char *publicKey)
 }
 
 /**
- * u2fs_dump_user_key:
- * @user_key: the user key.
- * @output: a buffer used to store the result
- *
- * Converts the user public key @user_key from the internal format to byte
- * format (#U2FS_PUBLIC_KEY_LEN bytes long).
- * Memory for @output is allocated and should be free'd.
- *
- * Returns: On success %U2FS_OK (integer 0) is returned, and on errors
- * a #u2fs_rc error code.
- */
-u2fs_rc u2fs_dump_user_key(const u2fs_EC_KEY_t * user_key, char **output)
-{
-  return dump_user_key(user_key, output);
-}
-
-/**
  * u2fs_get_registration_keyHandle:
  * @result: a registration result obtained from u2fs_registration_verify()
  *
@@ -289,23 +272,6 @@ const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result)
     return NULL;
 
   return result->publicKey;
-}
-
-/**
- * u2fs_get_user_key:
- * @result: a registration result obtained from u2fs_registration_verify()
- *
- * Extract the user public key obtained during the U2F registration operation.
- *
- * Returns: On success the pointer to the buffer containing the user public key
- * is returned, and on errors NULL.
- */
-u2fs_EC_KEY_t *u2fs_get_user_key(u2fs_reg_res_t * result)
-{
-  if (result == NULL)
-    return NULL;
-
-  return result->user_public_key;
 }
 
 /**

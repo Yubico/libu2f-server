@@ -32,6 +32,7 @@
 
 #include <u2f-server/u2f-server.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef void *u2fs_ECDSA_t;
 typedef void *u2fs_X509_t;

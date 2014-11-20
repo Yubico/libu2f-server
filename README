@@ -9,7 +9,7 @@ protocol.  More precisely, it provides an API for generating the JSON
 blobs required by U2F devices to perform the U2F Registration and U2F
 Authentication operations, and functionality for verifying the
 cryptographic operations.  For the host-side aspect, see our
-libu2f-host project.
+link:http://github.com/Yubico/libu2f-host[libu2f-host project].
 
 Warning and Known limitation: Attestation Certificate validation
 ----------------------------------------------------------------
@@ -33,21 +33,21 @@ Versioning
 ----------
 
 The version numbers for this project follows the principles of
-Semantic Versioning -- see http://semver.org/ -- which, briefly, uses
-the MAJOR.MINOR.PATCH scheme where MAJOR is bumped in API-incompatible
-changes, MINOR is bumped for new features that are backwards
-compatible, and PATCH is incremented when minor changes are done.
+Semantic Versioning -- see http://semver.org/[http://semver.org] -- which,
+briefly, uses the +MAJOR.MINOR.PATCH+ scheme where +MAJOR+ is bumped
+in API-incompatible changes, +MINOR+ is bumped for new features that are
+backwards compatible, and +PATCH+ is incremented when minor changes are done.
 
 Usage
 -----
 
 The library usage is documented in the API manual, see gtk-doc/html/
-after you have built with ./configure --enable-gtk-doc.
+after you have built with +./configure --enable-gtk-doc+.
 
 There is a command line utility that is useful for debugging or
 testing.  We describe how you can use it here.
 
-In order to perform a REGISTRATION operation, run the application
+In order to perform a *REGISTRATION* operation, run the application
 as follows:
 
   $ u2f-server -aregister -ohttp://demo.yubico.com \
@@ -69,7 +69,7 @@ The tool can be invoked as follows:
   $ u2f-host -aregister -o http://demo.yubico.com
 
 The previous JSON blob should now be pasted into the standard input of the
-u2f-host application and an EOF character should be sent (Ctrl-D on linux).
+u2f-host application and an +EOF+ character should be sent (+Ctrl-D+ on Linux).
 
 At this point your device should start flashing, waiting for an input.
 Touching the gold disk will allow you to proceed.
@@ -110,7 +110,7 @@ specified at invocation time (userkey.dat and keyhandle.dat
 respectively in this example).
 
 
-In order to perform an AUTHENTICATION operation, run the application
+In order to perform an *AUTHENTICATION* operation, run the application
 as follows:
 
   $ u2f-server -aauthenticate -ohttp://demo.yubico.com \
@@ -138,7 +138,7 @@ The tool can be invoked as follows:
   $ u2f-host -aauthenticate -o http://demo.yubico.com
 
 The previous JSON blob should now be pasted into the standard input of the
-u2f-host application and an EOF character should be sent (Ctrl-D) on linux.
+u2f-host application and an +EOF+ character should be sent (+Ctrl-D+ on Linux).
 
 At this point your device should start flashing, waiting for an input.
 Touching the gold disk will allow you to proceed.
@@ -161,10 +161,11 @@ which will report either a successful or a failed authentication.
 For successful authentication the counter value and the user
 presence value will be printed as well.
 
+[[building]]
 Building
 --------
 
-This project uses autoconf, automake and libtool to achieve
+This project uses 'autoconf', 'automake' and 'libtool' to achieve
 portability and ease of use.  If you downloaded a tarball, build it as
 follows.
 
@@ -173,19 +174,19 @@ follows.
   $ make check && sudo make install
 -----------
 
-The JSON library is needed, see:
-https://github.com/json-c/json-c/wiki
-Debian:	apt-get install libjson0-dev
+The JSON library is needed, see: +
+https://github.com/json-c/json-c/wiki +
+Debian:	+apt-get install libjson0-dev+ +
 
-You will also need OpenSSL:
-https://www.openssl.org/
-Debian:	apt-get install libssl-dev
+You will also need OpenSSL: +
+https://www.openssl.org/ +
+Debian:	+apt-get install libssl-dev+ +
 
-In order to perform self tests with make check,
+In order to perform self tests with +make check+,
 the Check Framework should be installed. However this is not required
-to build the library.
-http://check.sourceforge.net/
-Debian:	apt-get install check
+to build the library. +
+http://check.sourceforge.net/ +
+Debian:	+apt-get install check+ +
 
 Building from Git
 -----------------
@@ -211,7 +212,7 @@ Generate the build system using:
   $ autoreconf --install
 -----------
 
-Then build as usual, see above under "Building".
+Then build as usual, see above under <<building,Building>>.
 
 Portability
 -----------
@@ -222,8 +223,10 @@ well supported.
 Namespaces
 ----------
 
+......
 Project name: Yubico Universal 2nd Factor (U2F) Server C Library
 Short name: libu2f-server
 Symbol prefix: u2fs_
 Tool: u2f-server
 Pkg-config: u2f-server
+......

@@ -9,7 +9,7 @@ protocol.  More precisely, it provides an API for generating the JSON
 blobs required by U2F devices to perform the U2F Registration and U2F
 Authentication operations, and functionality for verifying the
 cryptographic operations.  For the host-side aspect, see our
-link:http://github.com/Yubico/libu2f-host[libu2f-host project].
+https://developers.yubico.com/libu2f-host/[libu2f-host project].
 
 Warning and Known limitation: Attestation Certificate validation
 ----------------------------------------------------------------
@@ -62,7 +62,8 @@ This will generate a JSON registration blob like the following:
 
 This can be used together with a client tool in order to
 generate a registration response. One such tool is included in the
-libu2f-host project that can be found at https://github.com/Yubico/libu2f-host/
+https://developers.yubico.com/libu2f-host/[libu2f-host project].
+
 
 The tool can be invoked as follows:
 
@@ -131,7 +132,7 @@ tp:\/\/demo.yubico.com" }
 
 This can be used together with a client tool in order to
 generate an authentication response. One such tool is included in the
-libu2f-host project that can be found at https://github.com/Yubico/libu2f-host/
+https://developers.yubico.com/libu2f-host/[libu2f-host project].
 
 The tool can be invoked as follows:
 

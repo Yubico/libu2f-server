@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   }
 
   if (!args_info.origin_given) {
-    printf("error: An origin must be specified with -o\n");
+    fprintf(stderr, "error: An origin must be specified with -o\n");
     exit(EXIT_FAILURE);
   } else if (strncmp("http://", args_info.origin_arg, 7) != 0
              && strncmp("https://", args_info.origin_arg, 8) != 0) {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
   }
 
   if (!args_info.appid_given) {
-    printf("error: An appId must be specified with -i\n");
+    fprintf(stderr, "error: An appId must be specified with -i\n");
     exit(EXIT_FAILURE);
   }
 
@@ -79,17 +79,17 @@ int main(int argc, char *argv[])
   }
   rc = u2fs_global_init(args_info.debug_flag ? U2FS_DEBUG : 0);
   if (rc != U2FS_OK) {
-    printf("error: u2fs_global_init (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error: u2fs_global_init (%d): %s\n", rc, u2fs_strerror(rc));
     exit(EXIT_FAILURE);
   }
   rc = u2fs_init(&ctx);
   if (rc != U2FS_OK) {
-    printf("error: u2fs_init (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error: u2fs_init (%d): %s\n", rc, u2fs_strerror(rc));
     exit(EXIT_FAILURE);
   }
   if (args_info.action_arg == action_arg_authenticate) {
     if (!args_info.key_handle_given) {
-      printf("error: Authentication action requires a key-handle\n");
+      fprintf(stderr, "error: Authentication action requires a key-handle\n");
       exit(EXIT_FAILURE);
     } else {
       FILE *fp;
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     }
     rc = u2fs_set_keyHandle(ctx, buf);
     if (rc != U2FS_OK) {
-      printf("error: u2fs_set_keyHandle (%d): %s\n", rc,
+      fprintf(stderr, "error: u2fs_set_keyHandle (%d): %s\n", rc,
              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 
   if (args_info.action_arg == action_arg_authenticate) {
     if (!args_info.user_key_given) {
-      printf("error: Authentication action requires a user-key\n");
+      fprintf(stderr, "error: Authentication action requires a user-key\n");
       exit(EXIT_FAILURE);
     } else {
       FILE *fp;
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
     rc = u2fs_set_publicKey(ctx, (unsigned char *) buf);
     if (rc != U2FS_OK) {
-      printf("error: u2fs_set_publicKey (%d): %s\n", rc,
+      fprintf(stderr, "error: u2fs_set_publicKey (%d): %s\n", rc,
              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
@@ -148,14 +148,14 @@ int main(int argc, char *argv[])
 
   rc = u2fs_set_appid(ctx, args_info.appid_arg);
   if (rc != U2FS_OK) {
-    printf("error: u2fs_set_appid (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error: u2fs_set_appid (%d): %s\n", rc, u2fs_strerror(rc));
     exit(EXIT_FAILURE);
   }
 
   if (args_info.challenge_arg) {
     rc = u2fs_set_challenge(ctx, args_info.challenge_arg);
     if (rc != U2FS_OK) {
-      printf("error: u2fs_set_challenge (%d): %s\n", rc,
+      fprintf(stderr, "error: u2fs_set_challenge (%d): %s\n", rc,
              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
@@ -169,11 +169,11 @@ int main(int argc, char *argv[])
     break;
   case action__NULL:
   default:
-    printf("error: unknown action.\n");
+    fprintf(stderr, "error: unknown action.\n");
     goto done;
   }
   if (rc != U2FS_OK) {
-    printf("error (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error (%d): %s\n", rc, u2fs_strerror(rc));
     goto done;
   }
   printf("%s\n", p);
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
     if (rc == U2FS_OK)
       printf("Registration successful\n");
     else {
-      printf("error: (%d) %s\n", rc, u2fs_strerror(rc));
+      fprintf(stderr, "error: (%d) %s\n", rc, u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
       
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
       }
       fclose(fp);
     } else {
-      printf("KeyHandle not saved!. Rerun with -k\n");
+      fprintf(stderr, "KeyHandle not saved!. Rerun with -k\n");
     }
 
     if (rc == U2FS_OK && args_info.user_key_given) {
@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
       fclose(fp);
     } else {
-      printf("User key not saved!. Rerun with -p\n");
+      fprintf(stderr, "User key not saved!. Rerun with -p\n");
     }
     break;
   case action_arg_authenticate:
@@ -245,20 +245,20 @@ int main(int argc, char *argv[])
             ("Successful authentication, counter: %d, user presence %d\n",
              counter, user_presence);
       } else
-        printf("Authentication failed: %s\n", u2fs_strerror(rc));
+        fprintf(stderr, "Authentication failed: %s\n", u2fs_strerror(rc));
     } else if (rc != U2FS_OK) {
-      printf("error: u2fs_authentication_verify (%d): %s\n", rc,
+      fprintf(stderr, "error: u2fs_authentication_verify (%d): %s\n", rc,
              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
     break;
   case action__NULL:
   default:
-    printf("error: unknown action.\n");
+    fprintf(stderr, "error: unknown action.\n");
     goto done;
   }
   if (rc != U2FS_OK) {
-    printf("error (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error (%d): %s\n", rc, u2fs_strerror(rc));
     goto done;
   }
   exit_code = EXIT_SUCCESS;

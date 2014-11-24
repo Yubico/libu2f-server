@@ -98,7 +98,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0) {
+      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0 && !feof(stdin)
+          && ferror(stdin))  {
         perror("read");
         exit(EXIT_FAILURE);
       }
@@ -123,7 +124,8 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0) {
+      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0 && !feof(stdin)
+          && ferror(stdin)) {
         perror("read");
         exit(EXIT_FAILURE);
       }
@@ -175,8 +177,8 @@ int main(int argc, char *argv[])
     goto done;
   }
   printf("%s\n", p);
-  if (fread(buf, 1, sizeof(buf), stdin) == 0 || !feof(stdin)
-      || ferror(stdin)) {
+  if (fread(buf, 1, sizeof(buf), stdin) == 0 && !feof(stdin)
+      && ferror(stdin)) {
     perror("read");
     exit(EXIT_FAILURE);
   }

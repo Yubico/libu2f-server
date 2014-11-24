@@ -79,7 +79,8 @@ int main(int argc, char *argv[])
   }
   rc = u2fs_global_init(args_info.debug_flag ? U2FS_DEBUG : 0);
   if (rc != U2FS_OK) {
-    fprintf(stderr, "error: u2fs_global_init (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error: u2fs_global_init (%d): %s\n", rc,
+            u2fs_strerror(rc));
     exit(EXIT_FAILURE);
   }
   rc = u2fs_init(&ctx);
@@ -89,7 +90,8 @@ int main(int argc, char *argv[])
   }
   if (args_info.action_arg == action_arg_authenticate) {
     if (!args_info.key_handle_given) {
-      fprintf(stderr, "error: Authentication action requires a key-handle\n");
+      fprintf(stderr,
+              "error: Authentication action requires a key-handle\n");
       exit(EXIT_FAILURE);
     } else {
       FILE *fp;
@@ -99,7 +101,7 @@ int main(int argc, char *argv[])
       }
 
       if (fread(buf, sizeof(char), BUFSIZ, fp) == 0 && !feof(stdin)
-          && ferror(stdin))  {
+          && ferror(stdin)) {
         perror("read");
         exit(EXIT_FAILURE);
       }
@@ -108,14 +110,15 @@ int main(int argc, char *argv[])
     rc = u2fs_set_keyHandle(ctx, buf);
     if (rc != U2FS_OK) {
       fprintf(stderr, "error: u2fs_set_keyHandle (%d): %s\n", rc,
-             u2fs_strerror(rc));
+              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
   }
 
   if (args_info.action_arg == action_arg_authenticate) {
     if (!args_info.user_key_given) {
-      fprintf(stderr, "error: Authentication action requires a user-key\n");
+      fprintf(stderr,
+              "error: Authentication action requires a user-key\n");
       exit(EXIT_FAILURE);
     } else {
       FILE *fp;
@@ -135,7 +138,7 @@ int main(int argc, char *argv[])
     rc = u2fs_set_publicKey(ctx, (unsigned char *) buf);
     if (rc != U2FS_OK) {
       fprintf(stderr, "error: u2fs_set_publicKey (%d): %s\n", rc,
-             u2fs_strerror(rc));
+              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
   }
@@ -148,7 +151,8 @@ int main(int argc, char *argv[])
 
   rc = u2fs_set_appid(ctx, args_info.appid_arg);
   if (rc != U2FS_OK) {
-    fprintf(stderr, "error: u2fs_set_appid (%d): %s\n", rc, u2fs_strerror(rc));
+    fprintf(stderr, "error: u2fs_set_appid (%d): %s\n", rc,
+            u2fs_strerror(rc));
     exit(EXIT_FAILURE);
   }
 
@@ -156,7 +160,7 @@ int main(int argc, char *argv[])
     rc = u2fs_set_challenge(ctx, args_info.challenge_arg);
     if (rc != U2FS_OK) {
       fprintf(stderr, "error: u2fs_set_challenge (%d): %s\n", rc,
-             u2fs_strerror(rc));
+              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
   }
@@ -192,7 +196,7 @@ int main(int argc, char *argv[])
       fprintf(stderr, "error: (%d) %s\n", rc, u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
-      
+
 
     if (args_info.key_handle_given) {
       FILE *fp;
@@ -248,7 +252,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Authentication failed: %s\n", u2fs_strerror(rc));
     } else if (rc != U2FS_OK) {
       fprintf(stderr, "error: u2fs_authentication_verify (%d): %s\n", rc,
-             u2fs_strerror(rc));
+              u2fs_strerror(rc));
       exit(EXIT_FAILURE);
     }
     break;

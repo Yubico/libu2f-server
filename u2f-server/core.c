@@ -952,7 +952,7 @@ done:
 
 static u2fs_rc
 parse_signatureData2(const unsigned char *data, size_t len,
-                     uint8_t * user_presence, uint32_t ** counter,
+                     uint8_t * user_presence, uint32_t * counter,
                      u2fs_ECDSA_t ** signature)
 {
   /*
@@ -981,14 +981,7 @@ parse_signatureData2(const unsigned char *data, size_t len,
     return U2FS_FORMAT_ERROR;
   }
 
-  *counter = malloc(sizeof(char) * U2FS_COUNTER_LEN);
-
-  if (*counter == NULL) {
-    if (debug)
-      fprintf(stderr, "Memory error\n");
-    return U2FS_MEMORY_ERROR;
-  }
-  memcpy(*counter, data + offset, U2FS_COUNTER_LEN);
+  memcpy((char *) counter, data + offset, U2FS_COUNTER_LEN);
 
   offset += U2FS_COUNTER_LEN;
 
@@ -1004,7 +997,7 @@ parse_signatureData2(const unsigned char *data, size_t len,
 
 static u2fs_rc
 parse_signatureData(const char *signatureData, uint8_t * user_presence,
-                    uint32_t ** counter, u2fs_ECDSA_t ** signature)
+                    uint32_t * counter, u2fs_ECDSA_t ** signature)
 {
 
   base64_decodestate b64;
@@ -1100,7 +1093,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   char *origin;
   uint8_t user_presence;
   uint32_t counter_num;
-  uint32_t *counter;
+  uint32_t counter;
   u2fs_ECDSA_t *signature;
   int i;
   int mask;
@@ -1164,7 +1157,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_process(&sha_ctx, (unsigned char *) application_parameter,
                  U2FS_HASH_LEN);
   sha256_process(&sha_ctx, (unsigned char *) &user_presence, 1);
-  sha256_process(&sha_ctx, (unsigned char *) counter, U2FS_COUNTER_LEN);
+  sha256_process(&sha_ctx, (unsigned char *) &counter, U2FS_COUNTER_LEN);
   sha256_process(&sha_ctx, (unsigned char *) challenge_parameter,
                  U2FS_HASH_LEN);
   sha256_done(&sha_ctx, dgst);
@@ -1181,20 +1174,15 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   if (*output == NULL)
     return U2FS_MEMORY_ERROR;
 
-
-  mask = 0x000000FF;
   counter_num = 0;
-  for (i = U2FS_COUNTER_LEN - 1; i >= 0; i--) {
-    counter_num += counter[i] & mask;
-    mask <<= 8;
-  }
+  counter_num |= (counter & 0xFF000000) >> 24;
+  counter_num |= (counter & 0x00FF0000) >> 8;
+  counter_num |= (counter & 0x0000FF00) << 8;
+  counter_num |= (counter & 0x000000FF) << 24;
 
   (*output)->verified = U2FS_OK;
   (*output)->user_presence = user_presence;
   (*output)->counter = counter_num;
-
-  free(counter);
-  counter = NULL;
 
   free(origin);
   origin = NULL;
@@ -1225,9 +1213,6 @@ failure:
 
   free(origin);
   origin = NULL;
-
-  free(counter);
-  counter = NULL;
 
   free_sig(signature);
   signature = NULL;

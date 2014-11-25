@@ -13,7 +13,7 @@ Details
 * Make sure your working environment is up to date.  Confirm with:
   +git checkout master && git pull && git diff+.
 
-* Make sure the version number in +configure.ac+ has been increment in +AC_INIT+.
+* Make sure the version number in +configure.ac+ has been incremented in +AC_INIT+.
 
 * Make sure the libtool shared library version has been incremented properly, see http://www.gnu.org/software/libtool/manual/html_node/Versioning.html Always increment +LT_REVISION+ on every release -- it makes it possible to have multiple releases installed concurrently which helps testing.
 

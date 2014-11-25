@@ -31,6 +31,7 @@ AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..
 U2FSERVER = $(top_builddir)/src/u2f-server
 
 AM_TESTS_ENVIRONMENT = U2FSBIN=$(U2FSERVER); export U2FSBIN;
+TESTS_ENVIRONMENT = U2FSBIN=$(U2FSERVER); export U2FSBIN;
 
 AM_LDFLAGS = -no-install
 

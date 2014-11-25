@@ -30,8 +30,7 @@
 EXIT_SUCCESS=0
 EXIT_FAILURE=99
 
-MKTEMP="/bin/mktemp"
-RM="/bin/rm"
+U2FSERVER=${U2FSERVER:-../src/u2f-server}
 
 ORIGIN="http://yubico.com"
 APPID="http://yubico.com"
@@ -86,52 +85,52 @@ jby5jb20iLCAidHlwIjogIm5hdmlnYXRvci5pZC5nZXRBc3NlcnRpb24iIH0=\", \"key\
 Handle\": \"1pak7LBnX4OSCkOIKd6P8I7OCwTBc7YKDDJ3Yhn_nArtvgvzn5P0NkcG2A\
 1iezF1h6QW8OKQp13lM0P5ZVSf1w\" }"
 
-$(${U2FSBIN} -a${REGISTER_PARAM})
+$(${U2FSERVER} -a${REGISTER_PARAM})
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(${U2FSBIN} -a${REGISTER_PARAM} -o${ORIGIN})
+$(${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN})
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(echo ${REG_RESPONSE_ERROR} | ${U2FSBIN} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} >/dev/null)
+$(echo ${REG_RESPONSE_ERROR} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
-KEYFILE=$($MKTEMP)
-USERFILE=$($MKTEMP)
+KEYFILE=$(mktemp)
+USERFILE=$(mktemp)
 
-$(echo ${REG_RESPONSE1} | ${U2FSBIN} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} -c${REG_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
+$(echo ${REG_RESPONSE1} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} -c${REG_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(echo ${AUTH_RESPONSE1} | ${U2FSBIN} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} >/dev/null)
+$(echo ${AUTH_RESPONSE1} | ${U2FSERVER} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(echo ${AUTH_RESPONSE1} | ${U2FSBIN} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -k${KEYFILE} >/dev/null)
+$(echo ${AUTH_RESPONSE1} | ${U2FSERVER} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -k${KEYFILE} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(echo ${AUTH_RESPONSE1} | ${U2FSBIN} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
+$(echo ${AUTH_RESPONSE1} | ${U2FSERVER} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 0 ]; then
     exit $EXIT_FAILURE
 fi
 
-$(${RM} ${KEYFILE})
-$(${RM} ${USERFILE})
+rm -f ${KEYFILE}
+rm -f ${USERFILE}
 
 exit $EXIT_SUCCESS

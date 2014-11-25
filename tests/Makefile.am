@@ -28,16 +28,19 @@
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..
 
-U2FSERVER = $(abs_top_builddir)/src/u2f-server
+U2FSERVER = $(top_builddir)/src/u2f-server
 
 AM_TESTS_ENVIRONMENT = U2FSBIN=$(U2FSERVER); export U2FSBIN;
-
-AM_TESTS_FD_REDIRECT = 9>&2
 
 AM_LDFLAGS = -no-install
 
 LDADD = $(top_builddir)/u2f-server/libu2f-server.la
 LDADD += $(CHECK_LIBS)
 
-TESTS = basic core u2f-server.sh
 check_PROGRAMS = basic core
+dist_check_SCRIPTS = u2f-server-test.sh
+TESTS = $(check_PROGRAMS) u2f-server-test.sh
+
+TEST_EXTENSIONS = .sh
+SH_LOG_COMPILER = $(SHELL)
+AM_SH_LOG_FLAGS =

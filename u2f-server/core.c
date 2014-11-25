@@ -444,7 +444,7 @@ parse_clientData(const char *clientData, char **challenge, char **origin)
   if (jo == NULL)
     return U2FS_JSON_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "challenge", k))
+  if (u2fs_json_object_object_get(jo, "challenge", k) == FALSE)
     return U2FS_JSON_ERROR;
 
   p = json_object_get_string(k);
@@ -455,7 +455,7 @@ parse_clientData(const char *clientData, char **challenge, char **origin)
   if (*challenge == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "origin", k))
+  if (u2fs_json_object_object_get(jo, "origin", k) == FALSE)
     return U2FS_JSON_ERROR;
 
   p = json_object_get_string(k);
@@ -487,7 +487,7 @@ parse_registration_response(const char *response, char **registrationData,
   if (jo == NULL)
     return U2FS_JSON_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "registrationData", k))
+  if (u2fs_json_object_object_get(jo, "registrationData", k) == FALSE)
     return U2FS_JSON_ERROR;
   p = json_object_get_string(k);
   if (p == NULL)
@@ -496,7 +496,7 @@ parse_registration_response(const char *response, char **registrationData,
   if (*registrationData == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "clientData", k))
+  if (u2fs_json_object_object_get(jo, "clientData", k) == FALSE)
     return U2FS_JSON_ERROR;
   p = json_object_get_string(k);
   if (p == NULL)
@@ -1039,7 +1039,7 @@ parse_authentication_response(const char *response, char **signatureData,
   if (jo == NULL)
     return U2FS_JSON_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "signatureData", k))
+  if (u2fs_json_object_object_get(jo, "signatureData", k) == FALSE)
     return U2FS_JSON_ERROR;
   p = json_object_get_string(k);
   if (p == NULL)
@@ -1048,7 +1048,7 @@ parse_authentication_response(const char *response, char **signatureData,
   if (*signatureData == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "clientData", k))
+  if (u2fs_json_object_object_get(jo, "clientData", k) == FALSE)
     return U2FS_JSON_ERROR;
   p = json_object_get_string(k);
   if (p == NULL)
@@ -1057,7 +1057,7 @@ parse_authentication_response(const char *response, char **signatureData,
   if (*clientData == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (!u2fs_json_object_object_get(jo, "keyHandle", k))
+  if (u2fs_json_object_object_get(jo, "keyHandle", k) == FALSE)
     return U2FS_JSON_ERROR;
   p = json_object_get_string(k);
   if (p == NULL)

@@ -41,51 +41,11 @@
 void dumpCert(const u2fs_X509_t * certificate)
 {
   X509 *cert = (X509 *) certificate;
+  BIO *STDout = BIO_new_fp(stderr, BIO_NOCLOSE);
 
-  BIO *bio_out = BIO_new_fp(stderr, BIO_NOCLOSE);
+  X509_print_ex(STDout,cert,0, 0);
 
-  BIO_printf(bio_out, "Certificate:\n  Data:\n");
-
-  long l = X509_get_version((X509 *) cert);
-  BIO_printf(bio_out, "    Version: %ld\n", l + 1);
-
-  int i;
-  ASN1_INTEGER *bs = X509_get_serialNumber((X509 *) cert);
-  BIO_printf(bio_out, "    Serial Number: ");
-  for (i = 0; i < bs->length; i++) {
-    BIO_printf(bio_out, "%02x", bs->data[i]);
-  }
-  BIO_printf(bio_out, "\n");
-
-  X509_signature_print(bio_out, cert->sig_alg, NULL);
-
-  BIO_printf(bio_out, "    Issuer: ");
-  X509_NAME_print(bio_out, X509_get_issuer_name((X509 *) cert), 0);
-  BIO_printf(bio_out, "\n");
-  BIO_printf(bio_out, "    Validity\n");
-  BIO_printf(bio_out, "      Not Before: ");
-  ASN1_TIME_print(bio_out, X509_get_notBefore((X509 *) cert));
-  BIO_printf(bio_out, "\n");
-  BIO_printf(bio_out, "      Not After : ");
-  ASN1_TIME_print(bio_out, X509_get_notAfter((X509 *) cert));
-  BIO_printf(bio_out, "\n");
-
-  BIO_printf(bio_out, "    Subject: ");
-  X509_NAME_print(bio_out, X509_get_subject_name((X509 *) cert), 0);
-  BIO_printf(bio_out, "\n");
-  EVP_PKEY *pkey = X509_get_pubkey((X509 *) cert);
-  BIO_printf(bio_out, "    ");
-  EVP_PKEY_print_public(bio_out, pkey, 0, NULL);
-  EVP_PKEY_free(pkey);
-
-  //Extensions
-  X509_CINF *ci = cert->cert_info;
-  X509V3_extensions_print(bio_out, "X509v3 extensions", ci->extensions,
-                          X509_FLAG_COMPAT, 0);
-
-  //Signature
-  X509_signature_print(bio_out, cert->sig_alg, cert->signature);
-  BIO_free(bio_out);
+  BIO_free(STDout);
 }
 
 void crypto_init(void)

@@ -62,6 +62,13 @@ PKG_CHECK_MODULES([LIBSSL], [libssl], [], [])
 
 PKG_CHECK_MODULES([CHECK], [check], [], [])
 
+AC_ARG_ENABLE([coverage],
+              [AS_HELP_STRING([--enable-coverage],
+                              [use Gcov to test the test suite])],
+                              [],
+                              [enable_cov=no])
+AM_CONDITIONAL([ENABLE_COV],[test '!' "$enable_cov" = no])
+
 AC_ARG_ENABLE([gcc-warnings],
   [AS_HELP_STRING([--enable-gcc-warnings],
 		  [turn on lots of GCC warnings (for developers)])],

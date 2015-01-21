@@ -53,5 +53,10 @@ else
 libu2f_server_la_LDFLAGS += -export-symbols-regex '^u2fs_.*'
 endif
 
+if ENABLE_COV
+AM_CFLAGS += --coverage
+AM_LDFLAGS = --coverage
+endif
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = u2f-server.pc

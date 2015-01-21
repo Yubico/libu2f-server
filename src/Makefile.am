@@ -48,3 +48,8 @@ u2f-server.1: $(srcdir)/u2f-server.c $(srcdir)/cmdline.ggo $(top_srcdir)/configu
 		--output=$@ $(builddir)/u2f-server$(EXEEXT) \
 		--name="Yubico Universal 2nd Factor (U2F) Server Tool" \
 		--no-info
+
+if ENABLE_COV
+AM_CFLAGS += --coverage
+AM_LDFLAGS = --coverage
+endif

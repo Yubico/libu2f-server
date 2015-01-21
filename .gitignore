@@ -68,3 +68,16 @@ tests/core
 u2f-server/libu2f-server.la
 u2f-server/u2f-server-version.h
 u2f-server/u2f-server.pc
+coverage/
+src/cmdline.gcda
+src/cmdline.gcno
+src/u2f-server.gcda
+src/u2f-server.gcno
+u2f-server/cdecode.gcno
+u2f-server/cencode.gcno
+u2f-server/core.gcno
+u2f-server/error.gcno
+u2f-server/global.gcno
+u2f-server/openssl.gcno
+u2f-server/sha256.gcno
+u2f-server/version.gcno

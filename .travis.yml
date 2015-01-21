@@ -10,3 +10,7 @@ before_install:
 env:
   - EXTRA="libjson0-dev libssl-dev check"
 script: ./build-aux/travis
+matrix:
+  include:
+    - compiler: gcc
+      env: COVERAGE="--enable-coverage" EXTRA="libjson0-dev libssl-dev check lcov"

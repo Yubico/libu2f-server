@@ -36,6 +36,7 @@ ORIGIN="http://yubico.com"
 APPID="http://yubico.com"
 AUTH_PARAM="authenticate"
 REGISTER_PARAM="register"
+ERROR_PARAM="unknown"
 
 REG_CHALLENGE1="TVgGf_GfMfVf4L2KiNmLdyIoR59ez4qtmLwwdG4-lkI"
 REG_RESPONSE1="{ \"registrationData\": \"BQRjk4BrghuG1RR0nIzda230YhTj4\
@@ -84,6 +85,12 @@ HF6MEMwWC1UUExnNnR3VlRmLVNPZFN5TzgiLCAib3JpZ2luIjogImh0dHA6XC9cL3l1Yml\
 jby5jb20iLCAidHlwIjogIm5hdmlnYXRvci5pZC5nZXRBc3NlcnRpb24iIH0=\", \"key\
 Handle\": \"1pak7LBnX4OSCkOIKd6P8I7OCwTBc7YKDDJ3Yhn_nArtvgvzn5P0NkcG2A\
 1iezF1h6QW8OKQp13lM0P5ZVSf1w\" }"
+
+$(${U2FSERVER} -a${ERROR_PARAM})
+RESULT=$?
+if [ $RESULT -ne 1 ]; then
+    exit $EXIT_FAILURE
+fi
 
 $(${U2FSERVER} -a${REGISTER_PARAM})
 RESULT=$?

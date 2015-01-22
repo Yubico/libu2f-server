@@ -8,5 +8,5 @@ autoreconf -i
 make check
 if [ "x$COVERAGE" != "x" ]; then
   gem install coveralls-lcov
-  coveralls-lcov coverage/app2.info
+  coveralls-lcov coverage/app3.info
 fi

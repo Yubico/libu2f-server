@@ -41,7 +41,8 @@ cov-report:
 	mkdir -p coverage
 	lcov --compat-libtool --directory . --capture --output-file coverage/app.info
 	lcov --extract coverage/app.info '*.c' --output-file coverage/app2.info
-	genhtml -o coverage/ coverage/app2.info
+	lcov --remove coverage/app2.info cmdline.c --output-file coverage/app3.info
+	genhtml -o coverage/ coverage/app3.info
 
 cov:
 	make cov-report

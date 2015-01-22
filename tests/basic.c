@@ -58,13 +58,18 @@ int main(void)
   printf("u2fs version: header %s library %s\n", U2FS_VERSION_STRING,
          u2fs_check_version(NULL));
 
-  rc = u2fs_global_init(0);
+  rc = u2fs_global_init(U2FS_DEBUG);
   if (rc != U2FS_OK) {
     printf("u2fs_global_init rc %d\n", rc);
     return EXIT_FAILURE;
   }
 
   if (u2fs_strerror(U2FS_OK) == NULL) {
+    printf("u2fs_strerror NULL\n");
+    return EXIT_FAILURE;
+  }
+
+  if (u2fs_strerror(0) == NULL) {
     printf("u2fs_strerror NULL\n");
     return EXIT_FAILURE;
   }

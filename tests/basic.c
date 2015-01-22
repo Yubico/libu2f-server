@@ -34,6 +34,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define INVALID_ERROR_CODE 1
+#define OOB_ERROR_CODE -100
+
 int main(void)
 {
   int rc;
@@ -69,7 +72,12 @@ int main(void)
     return EXIT_FAILURE;
   }
 
-  if (u2fs_strerror(0) == NULL) {
+  if (u2fs_strerror(INVALID_ERROR_CODE) == NULL) {
+    printf("u2fs_strerror NULL\n");
+    return EXIT_FAILURE;
+  }
+
+  if (u2fs_strerror(OOB_ERROR_CODE) == NULL) {
     printf("u2fs_strerror NULL\n");
     return EXIT_FAILURE;
   }

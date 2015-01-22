@@ -41,6 +41,7 @@ START_TEST(test_create)
 
   u2fs_ctx_t *ctx;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   u2fs_done(ctx);
@@ -53,6 +54,7 @@ END_TEST START_TEST(set_challenge)
 
   u2fs_ctx_t *ctx;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   ck_assert_int_eq(u2fs_set_challenge(ctx, ""), U2FS_CHALLENGE_ERROR);
@@ -83,6 +85,7 @@ END_TEST START_TEST(set_keyhandle)
 
   u2fs_ctx_t *ctx;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   ck_assert_int_eq(u2fs_set_keyHandle(ctx, NULL), U2FS_MEMORY_ERROR);
@@ -103,6 +106,7 @@ END_TEST START_TEST(set_origin)
 
   u2fs_ctx_t *ctx;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   ck_assert_int_eq(u2fs_set_origin(ctx, NULL), U2FS_MEMORY_ERROR);
@@ -121,6 +125,7 @@ END_TEST START_TEST(set_appid)
 
   u2fs_ctx_t *ctx;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   ck_assert_int_eq(u2fs_set_appid(ctx, NULL), U2FS_MEMORY_ERROR);
@@ -147,6 +152,7 @@ END_TEST START_TEST(set_publicKey)
     0x4c, 0x37, 0x97, 0x83, 0xcb, 0x15, 0x40
   };
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_publicKey(ctx, userkey_dat), U2FS_OK);
   /* TODO: how to check it was imported ok? This test is now a bit silly. */
@@ -195,6 +201,7 @@ END_TEST START_TEST(registration_verify_ok)
     0x2e, 0x53, 0xf5, 0x5a, 0xbf, 0xce, 0x92, 0xef, 0xf4
   };
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://demo.yubico.com"),
@@ -247,6 +254,7 @@ END_TEST START_TEST(registration_challenge_error)
 
   u2fs_reg_res_t *res = NULL;;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://demo.yubico.com"),
@@ -292,6 +300,7 @@ END_TEST START_TEST(registration_origin_error)
 
   u2fs_reg_res_t *res = NULL;;
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://example.com"), U2FS_OK);
@@ -333,6 +342,7 @@ END_TEST START_TEST(authentication_verify_ok)
     0x4c, 0x37, 0x97, 0x83, 0xcb
   };
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://demo.yubico.com"),
@@ -375,6 +385,7 @@ END_TEST START_TEST(authentication_verify_challenge_error)
     0x4c, 0x37, 0x97, 0x83, 0xcb
   };
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://demo.yubico.com"),
@@ -417,6 +428,7 @@ END_TEST START_TEST(authentication_verify_signature_error)
     0xfc, 0x5f, 0x8c, 0xad, 0x54
   };
 
+  ck_assert_int_eq(u2fs_global_init(U2FS_DEBUG), U2FS_OK);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
   ck_assert_int_eq(u2fs_set_appid(ctx, "http://demo.yubico.com"), U2FS_OK);
   ck_assert_int_eq(u2fs_set_origin(ctx, "http://demo.yubico.com"),

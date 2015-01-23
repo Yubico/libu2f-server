@@ -43,7 +43,7 @@ void dumpCert(const u2fs_X509_t * certificate)
   X509 *cert = (X509 *) certificate;
   BIO *STDout = BIO_new_fp(stderr, BIO_NOCLOSE);
 
-  X509_print_ex(STDout,cert,0, 0);
+  X509_print_ex(STDout, cert, 0, 0);
 
   BIO_free(STDout);
 }
@@ -346,9 +346,9 @@ START_TEST(test_errors)
     0x2e, 0x53, 0xf5, 0x5a, 0xbf, 0xce, 0x92, 0xef, 0xf4
   };
 
-  cert = (u2fs_X509_t*) &output;
-  key = (u2fs_EC_KEY_t*) &output;
-  sig = (u2fs_ECDSA_t*) &output;
+  cert = (u2fs_X509_t *) & output;
+  key = (u2fs_EC_KEY_t *) & output;
+  sig = (u2fs_ECDSA_t *) & output;
 
   ck_assert_int_eq(decode_X509(some_data, 5, &cert), U2FS_CRYPTO_ERROR);
   ck_assert_int_eq(decode_ECDSA(some_data, 5, &sig), U2FS_CRYPTO_ERROR);
@@ -359,9 +359,8 @@ START_TEST(test_errors)
   //ck_assert_int_eq(extract_EC_KEY_from_X509(cert, &key), U2FS_CRYPTO_ERROR);
 
 }
-END_TEST
 
-START_TEST(test_dup_key)
+END_TEST START_TEST(test_dup_key)
 {
 
   u2fs_EC_KEY_t *key = NULL;
@@ -382,16 +381,15 @@ START_TEST(test_dup_key)
   //ck_assert(memcmp(key, key2, sizeof(key)));  
 
 }
-END_TEST
 
-Suite *u2fs_crypto_suite(void)
+END_TEST Suite *u2fs_crypto_suite(void)
 {
   Suite *s;
   TCase *tc_crypto;
 
   s = suite_create("u2fs_crypto");
 
-  /* Core test case */
+  /* Crypto test case */
   tc_crypto = tcase_create("Crypto");
 
   tcase_add_test(tc_crypto, test_errors);
@@ -401,7 +399,8 @@ Suite *u2fs_crypto_suite(void)
   return s;
 }
 
-int main(void) {
+int main(void)
+{
 
   int number_failed;
   Suite *s;

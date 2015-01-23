@@ -34,70 +34,92 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <check.h>
+
 #define INVALID_ERROR_CODE 1
 #define OOB_ERROR_CODE -100
 
-int main(void)
+START_TEST(test_version)
 {
-  int rc;
-  u2fs_ctx_t *ctx;
+  ck_assert_msg(strcmp(U2FS_VERSION_STRING, u2fs_check_version(NULL)) == 0,
+                "Was expecting version %s, but found version %s\n",
+                U2FS_VERSION_STRING, u2fs_check_version(NULL));
 
-  if (strcmp(U2FS_VERSION_STRING, u2fs_check_version(NULL)) != 0) {
-    printf("version mismatch %s != %s\n", U2FS_VERSION_STRING,
-           u2fs_check_version(NULL));
-    return EXIT_FAILURE;
-  }
+  ck_assert_msg(u2fs_check_version(U2FS_VERSION_STRING) != NULL,
+                "Version NULL?\n");
 
-  if (u2fs_check_version(U2FS_VERSION_STRING) == NULL) {
-    printf("version NULL?\n");
-    return EXIT_FAILURE;
-  }
+  ck_assert_msg(u2fs_check_version("99.99.99") == NULL,
+                "Version not NULL?\n");
 
-  if (u2fs_check_version("99.99.99") != NULL) {
-    printf("version not NULL?\n");
-    return EXIT_FAILURE;
-  }
+}
 
-  printf("u2fs version: header %s library %s\n", U2FS_VERSION_STRING,
-         u2fs_check_version(NULL));
+END_TEST START_TEST(test_utils)
+{
+  ck_assert_msg(u2fs_global_init(U2FS_DEBUG) == U2FS_OK,
+                "u2fs_global_init rc %d\n, rc");
 
-  rc = u2fs_global_init(U2FS_DEBUG);
-  if (rc != U2FS_OK) {
-    printf("u2fs_global_init rc %d\n", rc);
-    return EXIT_FAILURE;
-  }
+  ck_assert_msg(u2fs_strerror(U2FS_OK) != NULL, "u2fs_strerror NULL\n");
 
-  if (u2fs_strerror(U2FS_OK) == NULL) {
-    printf("u2fs_strerror NULL\n");
-    return EXIT_FAILURE;
-  }
+  ck_assert_msg(u2fs_strerror(INVALID_ERROR_CODE) != NULL,
+                "u2fs_strerror NULL\n");
 
-  if (u2fs_strerror(INVALID_ERROR_CODE) == NULL) {
-    printf("u2fs_strerror NULL\n");
-    return EXIT_FAILURE;
-  }
-
-  if (u2fs_strerror(OOB_ERROR_CODE) == NULL) {
-    printf("u2fs_strerror NULL\n");
-    return EXIT_FAILURE;
-  }
+  ck_assert_msg(u2fs_strerror(OOB_ERROR_CODE) != NULL,
+                "u2fs_strerror NULL\n");
 
   {
     const char *s;
     s = u2fs_strerror_name(U2FS_OK);
-    if (s == NULL || strcmp(s, "U2FS_OK") != 0) {
-      printf("u2fs_strerror_name %s\n", s);
-      return EXIT_FAILURE;
-    }
+    ck_assert_msg(s != NULL
+                  && strcmp(s, "U2FS_OK") == 0, "u2fs_strerror_name %s\n",
+                  s);
+
   }
+}
 
-  rc = u2fs_init(&ctx);
+END_TEST START_TEST(test_init)
+{
 
-  /* XXX */
+  int rc;
+  u2fs_ctx_t *ctx;
+
+  ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
 
   u2fs_done(ctx);
-
   u2fs_global_done();
 
-  return EXIT_SUCCESS;
+}
+
+END_TEST Suite *basic_suite(void)
+{
+  Suite *s;
+  TCase *tc_basic;
+
+  s = suite_create("u2fs_basic");
+
+  /* Basic test case */
+  tc_basic = tcase_create("Basic");
+
+  tcase_add_test(tc_basic, test_version);
+  tcase_add_test(tc_basic, test_utils);
+  tcase_add_test(tc_basic, test_init);
+
+  suite_add_tcase(s, tc_basic);
+
+  return s;
+}
+
+
+int main(void)
+{
+  int number_failed;
+  Suite *s;
+  SRunner *sr;
+
+  s = basic_suite();
+  sr = srunner_create(s);
+
+  srunner_run_all(sr, CK_NORMAL);
+  number_failed = srunner_ntests_failed(sr);
+  srunner_free(sr);
+  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

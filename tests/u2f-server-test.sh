@@ -34,9 +34,12 @@ U2FSERVER=${U2FSERVER:-../src/u2f-server}
 
 ORIGIN="http://yubico.com"
 APPID="http://yubico.com"
+ORIGIN_WRONG="ftp://yubico.com"
 AUTH_PARAM="authenticate"
 REGISTER_PARAM="register"
 ERROR_PARAM="unknown"
+
+WRONG_CHALLENGE1="abcd"
 
 REG_CHALLENGE1="TVgGf_GfMfVf4L2KiNmLdyIoR59ez4qtmLwwdG4-lkI"
 REG_RESPONSE1="{ \"registrationData\": \"BQRjk4BrghuG1RR0nIzda230YhTj4\
@@ -85,8 +88,13 @@ HF6MEMwWC1UUExnNnR3VlRmLVNPZFN5TzgiLCAib3JpZ2luIjogImh0dHA6XC9cL3l1Yml\
 jby5jb20iLCAidHlwIjogIm5hdmlnYXRvci5pZC5nZXRBc3NlcnRpb24iIH0=\", \"key\
 Handle\": \"1pak7LBnX4OSCkOIKd6P8I7OCwTBc7YKDDJ3Yhn_nArtvgvzn5P0NkcG2A\
 1iezF1h6QW8OKQp13lM0P5ZVSf1w\" }"
+AUTH_RESPONSE2="{ \"signatureData\": \"AQAAAFwwRQIgGcz53KRohZ51ZuL2A4RygkV9P7KuT7k5K6MZRBBSFrMCIQDz4D-JmY_OS-bYYTRnBBtJG_m9McGK6lZuaCFBnbapCw==\", \"clientData\": \"eyAiY2hhbGxlbmdlIjogInVlamIyR0Y5SUNEZ1BZZ0pGR\
+HF6MEMwWC1UUExnNnR3VlRmLVNPZFN5TzgiLCAib3JpZ2luIjogImh0dHA6XC9cL3l1Yml\
+jby5jb20iLCAidHlwIjogIm5hdmlnYXRvci5pZC5nZXRBc3NlcnRpb24iIH0=\", \"key\
+Handle\": \"1pak7LBnX4OSCkOIKd6P8I7OCwTBc7YKDDJ3Yhn_nArtvgvzn5P0NkcG2A\
+1iezF1h6QW8OKQp13lM0P5ZVSf1w\" }"
 
-$(${U2FSERVER} -a${ERROR_PARAM})
+$(${U2FSERVER} --${ERROR_PARAM})
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
@@ -104,6 +112,12 @@ if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE
 fi
 
+$(echo ${REG_RESPONSE_ERROR} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN_WRONG} -i${APPID} >/dev/null)
+RESULT=$?
+if [ $RESULT -ne 1 ]; then
+    exit $EXIT_FAILURE
+fi
+
 $(echo ${REG_RESPONSE_ERROR} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
@@ -112,6 +126,18 @@ fi
 
 KEYFILE=$(mktemp)
 USERFILE=$(mktemp)
+
+$(echo ${REG_RESPONSE1} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} -c${WRONG_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
+RESULT=$?
+if [ $RESULT -ne 1 ]; then
+    exit $EXIT_FAILURE
+fi
+
+$(echo ${REG_RESPONSE1} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} -c${REG_CHALLENGE1} >/dev/null)
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+    exit $EXIT_FAILURE
+fi
 
 $(echo ${REG_RESPONSE1} | ${U2FSERVER} -a${REGISTER_PARAM} -o${ORIGIN} -i${APPID} -c${REG_CHALLENGE1} -p${USERFILE} -k${KEYFILE} >/dev/null)
 RESULT=$?
@@ -126,6 +152,12 @@ if [ $RESULT -ne 1 ]; then
 fi
 
 $(echo ${AUTH_RESPONSE1} | ${U2FSERVER} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -k${KEYFILE} >/dev/null)
+RESULT=$?
+if [ $RESULT -ne 1 ]; then
+    exit $EXIT_FAILURE
+fi
+
+$(echo ${AUTH_RESPONSE2} | ${U2FSERVER} -a${AUTH_PARAM} -o${ORIGIN} -i${APPID} -c${AUTH_CHALLENGE1} -k${KEYFILE} >/dev/null)
 RESULT=$?
 if [ $RESULT -ne 1 ]; then
     exit $EXIT_FAILURE

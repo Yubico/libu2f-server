@@ -1,3 +1,6 @@
+image:https://travis-ci.org/Yubico/libu2f-server.svg?branch=master["Build Status", link="https://travis-ci.org/Yubico/libu2f-server"]
+image:https://coveralls.io/repos/Yubico/libu2f-server/badge.svg?branch=master["Coverage Status", link="https://coveralls.io/r/Yubico/libu2f-server?branch=master"]
+
 Yubico Universal 2nd Factor (U2F) Server C Library
 ==================================================
 

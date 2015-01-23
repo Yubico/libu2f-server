@@ -32,6 +32,10 @@
 
 #include "internal.h"
 
+#ifdef MAKE_CHECK
+int debug = 1;
+#endif
+
 void dumpCert(const u2fs_X509_t * certificate);
 
 void crypto_init(void);

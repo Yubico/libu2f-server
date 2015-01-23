@@ -65,6 +65,7 @@ tests/Makefile
 tests/Makefile.in
 tests/basic
 tests/core
+tests/openssl
 u2f-server/libu2f-server.la
 u2f-server/u2f-server-version.h
 u2f-server/u2f-server.pc
@@ -81,3 +82,5 @@ u2f-server/global.gcno
 u2f-server/openssl.gcno
 u2f-server/sha256.gcno
 u2f-server/version.gcno
+tests/*.gcno
+tests/*.gcda

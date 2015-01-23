@@ -26,14 +26,20 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..
+AM_CFLAGS += -DMAKE_CHECK
+AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..  $(LIBSSL_CFLAGS)
 
 AM_LDFLAGS = -no-install
 
-LDADD = $(top_builddir)/u2f-server/libu2f-server.la
-LDADD += $(CHECK_LIBS)
+if ENABLE_COV
+AM_CFLAGS += --coverage
+AM_LDFLAGS += --coverage
+endif
 
-check_PROGRAMS = basic core
+LDADD = $(top_builddir)/u2f-server/libu2f-server.la
+LDADD += $(CHECK_LIBS) $(LIBSSL_LIBS)
+
+check_PROGRAMS = basic core openssl
 dist_check_SCRIPTS = u2f-server-test.sh
 TESTS = $(check_PROGRAMS) u2f-server-test.sh
 

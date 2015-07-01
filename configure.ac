@@ -30,8 +30,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # http://www.gnu.org/s/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST(LT_CURRENT, 1)
-AC_SUBST(LT_REVISION, 0)
+AC_SUBST(LT_CURRENT, 0)
+AC_SUBST(LT_REVISION, 2)
 AC_SUBST(LT_AGE, 0)
 
 AM_INIT_AUTOMAKE([gnits dist-xz no-dist-gzip std-options -Wall])

@@ -4,7 +4,7 @@ set -e
 set -x
 
 autoreconf -i
-./configure $COVERAGE
+./configure --disable-h2a $COVERAGE
 make check
 if [ "x$COVERAGE" != "x" ]; then
   gem install coveralls-lcov

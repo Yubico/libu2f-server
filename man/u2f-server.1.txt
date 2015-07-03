@@ -38,7 +38,6 @@ A file containing the public user-key
 *-d, --debug*::
 Print debug information to standard error
 (default=off)
-+
 
 == REPORTING BUGS
 Report bugs at <https://github.com/Yubico/libu2f-server>.

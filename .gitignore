@@ -59,7 +59,7 @@ src/.gdbinit
 src/cmdline.c
 src/cmdline.h
 src/u2f-server
-src/u2f-server.1
+man/u2f-server.1
 tests/.deps/
 tests/Makefile
 tests/Makefile.in

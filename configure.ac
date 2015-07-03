@@ -44,6 +44,7 @@ LT_INIT([win32-dll])
 
 GTK_DOC_CHECK(1.1)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
+AM_MISSING_PROG(HELP2ADOC, help2adoc, $missing_dir)
 gl_LD_VERSION_SCRIPT
 
 PKG_CHECK_MODULES([LIBJSON], [json-c], [], [
@@ -68,6 +69,13 @@ AC_ARG_ENABLE([coverage],
                               [],
                               [enable_cov=no])
 AM_CONDITIONAL([ENABLE_COV],[test '!' "$enable_cov" = no])
+
+AC_ARG_ENABLE([h2a],
+              [AS_HELP_STRING([--enable-h2a],
+                              [generate asciidoc manpages])],
+                              [enable_h2a=$enableval],
+                              [enable_h2a=yes])
+AM_CONDITIONAL([ENABLE_H2A],[test '!' "$enable_h2a" = no])
 
 AC_ARG_ENABLE([gcc-warnings],
   [AS_HELP_STRING([--enable-gcc-warnings],

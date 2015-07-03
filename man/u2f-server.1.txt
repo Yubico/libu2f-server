@@ -1,0 +1,45 @@
+= LIBU2F-SERVER(1)
+:doctype:	manpage
+:man source:	libu2f-server
+:man version:	1.0.1
+
+== NAME
+libu2f-server - Yubico Universal 2nd Factor (U2F) Server Tool
+
+== SYNOPSIS
+*libu2f-server* [OPTIONS]...
+
+== OPTIONS
+*-h, --help*::
+Print help and exit
+
+*-V, --version*::
+Print version and exit
+
+*-o, --origin=STRING*::
+Origin URL to use.
+
+*-i, --appid=STRING*::
+Application ID to use.
+
+*-c, --challenge=STRING*::
+Challenge (Base64-URL encoded) string to use.
+
+*-a, --action=ENUM*::
+Action to take.  (possible values="register",
+"authenticate")
+
+*-k, --key-handle=STRING*::
+A file containing a key-handle
+
+*-p, --user-key=STRING*::
+A file containing the public user-key
+
+*-d, --debug*::
+Print debug information to standard error
+(default=off)
++
+
+== REPORTING BUGS
+Report bugs at <https://github.com/Yubico/libu2f-server>.
+

@@ -45,9 +45,19 @@ DISTCLEANFILES = $(dist_man_MANS)
 
 u2f-server.1: $(srcdir)/u2f-server.c $(srcdir)/cmdline.ggo $(top_srcdir)/configure.ac
 	$(HELP2MAN) \
-		--output=$@ $(builddir)/u2f-server$(EXEEXT) \
+		--output=$(top_builddir)/man/$@ $(builddir)/u2f-server$(EXEEXT) \
 		--name="Yubico Universal 2nd Factor (U2F) Server Tool" \
 		--no-info
+if ENABLE_H2A
+	$(HELP2ADOC) \
+		-e $(builddir)/u2f-server$(EXEEXT) \
+		--name="Yubico Universal 2nd Factor (U2F) Server Tool" \
+		> $(top_builddir)/man/$@.txt
+endif
+
+clean-local:
+	rm -f $(top_builddir)/man/*.[1-9]
+	rm -f $(top_builddir)/man/*.[1-9].txt
 
 if ENABLE_COV
 AM_CFLAGS += --coverage

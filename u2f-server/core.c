@@ -82,12 +82,14 @@ u2fs_rc u2fs_init(u2fs_ctx_t ** ctx)
   rc = set_random_bytes(buf, U2FS_CHALLENGE_RAW_LEN);
   if (rc != U2FS_OK) {
     free(*ctx);
+    *ctx = NULL;
     return rc;
   }
 
   rc = encode_b64u(buf, U2FS_CHALLENGE_RAW_LEN, (*ctx)->challenge);
   if (rc != U2FS_OK) {
     free(*ctx);
+    *ctx = NULL;
     return rc;
   }
 
@@ -668,6 +670,8 @@ static u2fs_rc parse_registrationData(const char *registrationData,
                                attestation_certificate, signature);
 
   free(data);
+  data = NULL;
+
   return rc;
 }
 
@@ -679,7 +683,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   u2fs_rc rc = 0;
 
   data = calloc(sizeof(char), clientData_len);
-  if (data == NULL || output == NULL;)
+  if (data == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
   base64_init_decodestate(&b64);
@@ -692,6 +696,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   *output = strndup(data, strlen(data));
 
   free(data);
+  data = NULL;
 
   if (*output == NULL) {
     fprintf(stderr, "Memory Error\n");
@@ -818,6 +823,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
     goto failure;
 
   free_sig(signature);
+  signature = NULL;
 
   *output = calloc(1, sizeof(**output));
   if (*output == NULL) {
@@ -1056,6 +1062,8 @@ parse_signatureData(const char *signatureData, uint8_t * user_presence,
                             signature);
 
   free(data);
+  data = NULL;
+
   return rc;
 }
 

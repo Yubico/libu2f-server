@@ -227,6 +227,7 @@ u2fs_rc extract_EC_KEY_from_X509(const u2fs_X509_t * cert,
   *key = (u2fs_EC_KEY_t *) EVP_PKEY_get1_EC_KEY(pkey);
 
   EVP_PKEY_free(pkey);
+  pkey = NULL;
 
   if (*key == NULL) {
     if (debug) {
@@ -294,6 +295,7 @@ u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 
   if (*output == NULL) {
     EC_GROUP_free(ecg);
+    ecg = NULL;
     return U2FS_MEMORY_ERROR;
   }
 
@@ -301,12 +303,14 @@ u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
       (ecg, point, pcf, (unsigned char *) *output, U2FS_PUBLIC_KEY_LEN,
        NULL) != U2FS_PUBLIC_KEY_LEN) {
     free(ecg);
+    ecg = NULL;
     free(*output);
     *output = NULL;
     return U2FS_CRYPTO_ERROR;
   }
 
   EC_GROUP_free(ecg);
+  ecg = NULL;
 
   return U2FS_OK;
 

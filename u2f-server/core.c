@@ -684,7 +684,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
 
   if (output == NULL)
     return U2FS_MEMORY_ERROR;
-  
+
   data = calloc(sizeof(char), clientData_len);
   if (data == NULL)
     return U2FS_MEMORY_ERROR;

@@ -679,7 +679,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   u2fs_rc rc = 0;
 
   data = calloc(sizeof(char), clientData_len);
-  if (data == NULL)
+  if (data == NULL || output == NULL;)
     return U2FS_MEMORY_ERROR;
 
   base64_init_decodestate(&b64);
@@ -693,7 +693,7 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
 
   free(data);
 
-  if (output == NULL || *output == NULL) {
+  if (*output == NULL) {
     fprintf(stderr, "Memory Error\n");
     return U2FS_MEMORY_ERROR;
   }
@@ -1036,9 +1036,11 @@ parse_signatureData(const char *signatureData, uint8_t * user_presence,
   int data_len;
   u2fs_rc rc;
 
-  data = malloc(signatureData_len);
+  data = malloc(signatureData_len + 1);
   if (data == NULL)
     return U2FS_MEMORY_ERROR;
+
+  data[signatureData_len] = '\0';
 
   base64_init_decodestate(&b64);
   data_len =

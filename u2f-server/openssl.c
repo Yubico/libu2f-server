@@ -77,14 +77,14 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len,
 
   const unsigned char *p;
 
-  if (data == NULL || len == 0)
+  if (data == NULL || len == 0 || cert == NULL)
     return U2FS_MEMORY_ERROR;
 
   p = data;
 
   //Always set 1st param to NULL as per http://www.tedunangst.com/flak/post/analysis-of-d2i-X509-reuse
   *cert = (u2fs_X509_t *) d2i_X509(NULL, &p, len);
-  if (cert == NULL || *cert == NULL) {
+  if (*cert == NULL) {
     if (debug) {
       unsigned long err = 0;
       err = ERR_get_error();

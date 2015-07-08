@@ -27,7 +27,8 @@
 
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CFLAGS += -DMAKE_CHECK
-AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..  $(LIBSSL_CFLAGS)
+AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/..
+AM_CPPFLAGS+=$(LIBSSL_CFLAGS) $(LIBCRYPTO_CFLAGS)
 
 AM_LDFLAGS = -no-install
 
@@ -37,7 +38,7 @@ AM_LDFLAGS += --coverage
 endif
 
 LDADD = $(top_builddir)/u2f-server/libu2f-server.la
-LDADD += $(CHECK_LIBS) $(LIBSSL_LIBS)
+LDADD += $(CHECK_LIBS) $(LIBSSL_LIBS) $(LIBCRYPTO_LIBS)
 
 check_PROGRAMS = basic core openssl
 dist_check_SCRIPTS = u2f-server-test.sh

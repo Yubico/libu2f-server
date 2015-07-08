@@ -26,13 +26,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/.. -I$(builddir)/../u2f-server $(LIBSSL_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/.. -I$(builddir)/.. -I$(builddir)/../u2f-server
 
 bin_PROGRAMS = u2f-server
 
 u2f_server_SOURCES = u2f-server.c
 u2f_server_SOURCES += cmdline.ggo cmdline.c cmdline.h
-u2f_server_LDADD = ../u2f-server/libu2f-server.la $(LIBSSL_LIBS)
+u2f_server_LDADD = ../u2f-server/libu2f-server.la
 
 cmdline.c cmdline.h: cmdline.ggo Makefile.am
 	gengetopt --no-handle-help --input $^

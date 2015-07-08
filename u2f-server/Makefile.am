@@ -26,10 +26,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS=-I$(srcdir)/.. -I$(builddir)/.. $(LIBJSON_CFLAGS) $(LIBSSL_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir)/.. -I$(builddir)/..
+AM_CPPFLAGS += $(LIBJSON_CFLAGS) $(LIBSSL_CFLAGS)
 
 lib_LTLIBRARIES = libu2f-server.la
-u2f_server_includedir=$(includedir)/u2f-server
+u2f_server_includedir = $(includedir)/u2f-server
 u2f_server_include_HEADERS = u2f-server.h u2f-server-version.h
 
 libu2f_server_la_SOURCES = u2f-server.h u2f-server-version.h

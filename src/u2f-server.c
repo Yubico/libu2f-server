@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
   u2fs_reg_res_t *reg_result;
   u2fs_auth_res_t *auth_result;
   u2fs_rc rc;
+  int len;
   if (cmdline_parser(argc, argv, &args_info) != 0)
     exit(EXIT_FAILURE);
   if (args_info.help_given) {
@@ -100,7 +101,9 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0 && !feof(stdin)
+      len = fread(buf, sizeof(char), BUFSIZ, fp);
+      buf[len] = '\0';
+      if (len == 0 && !feof(stdin)
           && ferror(stdin)) {
         perror("read");
         exit(EXIT_FAILURE);
@@ -127,7 +130,9 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      if (fread(buf, sizeof(char), BUFSIZ, fp) == 0 && !feof(stdin)
+      len = fread(buf, sizeof(char), BUFSIZ, fp);
+      buf[len] = '\0';
+      if (len == 0 && !feof(stdin)
           && ferror(stdin)) {
         perror("read");
         exit(EXIT_FAILURE);
@@ -181,7 +186,9 @@ int main(int argc, char *argv[])
     goto done;
   }
   printf("%s\n", p);
-  if (fread(buf, 1, sizeof(buf), stdin) == 0 && !feof(stdin)
+  len = fread(buf, 1, sizeof(buf), stdin);
+  buf[len] = '\0';
+  if (len == 0 && !feof(stdin)
       && ferror(stdin)) {
     perror("read");
     exit(EXIT_FAILURE);

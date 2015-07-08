@@ -647,9 +647,11 @@ static u2fs_rc parse_registrationData(const char *registrationData,
   int data_len;
   u2fs_rc rc;
 
-  data = malloc(registrationData_len);
+  data = malloc(registrationData_len + 1);
   if (data == NULL)
     return U2FS_MEMORY_ERROR;
+
+  data[registrationData_len] = '\0';
 
   base64_init_decodestate(&b64);
   data_len =
@@ -1102,10 +1104,18 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   if (ctx == NULL || response == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
+  signatureData = NULL;
+  clientData = NULL;
+  clientData_decoded = NULL;
+  keyHandle = NULL;
+  challenge = NULL;
+  origin = NULL;
+  signature = NULL;
+
   rc = parse_authentication_response(response, &signatureData,
                                      &clientData, &keyHandle);
   if (rc != U2FS_OK)
-    return rc;
+    goto failure;
 
   if (debug) {
     fprintf(stderr, "signatureData: %s\n", signatureData);
@@ -1116,17 +1126,17 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   rc = parse_signatureData(signatureData, &user_presence,
                            &counter, &signature);
   if (rc != U2FS_OK)
-    return rc;
+    goto failure;
 
   rc = decode_clientData(clientData, &clientData_decoded);
 
   if (rc != U2FS_OK)
-    return rc;
+    goto failure;
 
   rc = parse_clientData(clientData_decoded, &challenge, &origin);
 
   if (rc != U2FS_OK)
-    return rc;
+    goto failure;
 
   if (strcmp(ctx->challenge, challenge) != 0) {
     rc = U2FS_CHALLENGE_ERROR;
@@ -1205,26 +1215,40 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   return U2FS_OK;
 
 failure:
-  free(clientData_decoded);
-  clientData_decoded = NULL;
+  if (clientData_decoded) {
+    free(clientData_decoded);
+    clientData_decoded = NULL;
+  }
 
-  free(challenge);
-  challenge = NULL;
+  if (challenge) {
+    free(challenge);
+    challenge = NULL;
+  }
 
-  free(origin);
-  origin = NULL;
+  if (origin) {
+    free(origin);
+    origin = NULL;
+  }
 
-  free_sig(signature);
-  signature = NULL;
+  if (signature) {
+    free_sig(signature);
+    signature = NULL;
+  }
 
-  free(signatureData);
-  signatureData = NULL;
+  if (signatureData) {
+    free(signatureData);
+    signatureData = NULL;
+  }
 
-  free(clientData);
-  clientData = NULL;
+  if (clientData) {
+    free(clientData);
+    clientData = NULL;
+  }
 
-  free(keyHandle);
-  keyHandle = NULL;
+  if (keyHandle) {
+    free(keyHandle);
+    keyHandle = NULL;
+  }
 
   return rc;
 }

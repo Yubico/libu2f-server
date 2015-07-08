@@ -104,14 +104,14 @@ u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
 
   const unsigned char *p;
 
-  if (data == NULL || len == 0)
+  if (data == NULL || len == 0 || sig == NULL)
     return U2FS_MEMORY_ERROR;
 
   p = data;
 
   *sig = (u2fs_ECDSA_t *) d2i_ECDSA_SIG(NULL, &p, len);
 
-  if (sig == NULL || *sig == NULL) {
+  if (*sig == NULL) {
     if (debug) {
       unsigned long err = 0;
       err = ERR_get_error();

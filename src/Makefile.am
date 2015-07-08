@@ -40,10 +40,10 @@ cmdline.c cmdline.h: cmdline.ggo Makefile.am
 BUILT_SOURCES = cmdline.c cmdline.h
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
-dist_man_MANS = u2f-server.1
+dist_man_MANS = $(top_srcdir)/man/u2f-server.1
 DISTCLEANFILES = $(dist_man_MANS)
 
-u2f-server.1: $(srcdir)/u2f-server.c $(srcdir)/cmdline.ggo $(top_srcdir)/configure.ac
+$(top_srcdir)/man/u2f-server.1: $(srcdir)/u2f-server.c $(srcdir)/cmdline.ggo $(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--output=$(top_builddir)/man/$@ $(builddir)/u2f-server$(EXEEXT) \
 		--name="Yubico Universal 2nd Factor (U2F) Server Tool" \

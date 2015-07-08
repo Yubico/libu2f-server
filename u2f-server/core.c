@@ -682,8 +682,11 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   char *data;
   u2fs_rc rc = 0;
 
+  if (output == NULL)
+    return U2FS_MEMORY_ERROR;
+  
   data = calloc(sizeof(char), clientData_len);
-  if (data == NULL || output == NULL)
+  if (data == NULL)
     return U2FS_MEMORY_ERROR;
 
   base64_init_decodestate(&b64);
@@ -1219,8 +1222,10 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   signature = NULL;
 
   *output = calloc(1, sizeof(**output));
-  if (*output == NULL)
-    return U2FS_MEMORY_ERROR;
+  if (*output == NULL) {
+    rc = U2FS_MEMORY_ERROR;
+    goto failure;
+  }
 
   counter_num = 0;
   counter_num |= (counter & 0xFF000000) >> 24;

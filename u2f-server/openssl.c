@@ -208,7 +208,7 @@ u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,
 u2fs_rc extract_EC_KEY_from_X509(const u2fs_X509_t * cert,
                                  u2fs_EC_KEY_t ** key)
 {
-  if (cert == NULL)
+  if (cert == NULL || key == NULL)
     return U2FS_MEMORY_ERROR;
 
   EVP_PKEY *pkey = X509_get_pubkey((X509 *) cert);
@@ -228,7 +228,7 @@ u2fs_rc extract_EC_KEY_from_X509(const u2fs_X509_t * cert,
 
   EVP_PKEY_free(pkey);
 
-  if (key == NULL || *key == NULL) {
+  if (*key == NULL) {
     if (debug) {
       unsigned long err = 0;
       err = ERR_get_error();

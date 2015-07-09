@@ -61,9 +61,10 @@ int main(int argc, char *argv[])
   if (!args_info.origin_given) {
     fprintf(stderr, "error: An origin must be specified with -o\n");
     exit(EXIT_FAILURE);
-  } else if (strncmp("http://", args_info.origin_arg, 7) != 0
-             && strncmp("https://", args_info.origin_arg, 8) != 0) {
-    fprintf(stderr, "error: origin must be http or https\n");
+  } else if (strncmp("http://", args_info.origin_arg, 7) != 0 &&
+             strncmp("https://", args_info.origin_arg, 8) != 0 &&
+             strncmp("pam://", args_info.origin_arg, 6) != 0) {
+    fprintf(stderr, "error: origin must be http, https or pam\n");
     exit(EXIT_FAILURE);
   }
 

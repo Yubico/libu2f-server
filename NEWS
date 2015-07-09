@@ -1,5 +1,7 @@
 libu2f-server NEWS -- History of user-visible changes.          -*- outline -*-
 
+* Version 1.0.2 (unreleased)
+
 * Version 1.0.1 (released 2015-07-09)
  ** General fixes and improvements.
  ** Changed pkg-config settings to accommodate changes in OpenSSL.

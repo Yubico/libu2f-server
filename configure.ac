@@ -25,13 +25,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([libu2f-server], [1.0.1], [yubico-devel@googlegroups.com])
+AC_INIT([libu2f-server], [1.0.2], [yubico-devel@googlegroups.com])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # http://www.gnu.org/s/libtool/manual/html_node/Updating-version-info.html
 AC_SUBST(LT_CURRENT, 0)
-AC_SUBST(LT_REVISION, 3)
+AC_SUBST(LT_REVISION, 4)
 AC_SUBST(LT_AGE, 0)
 
 AM_INIT_AUTOMAKE([gnits dist-xz no-dist-gzip std-options -Wall])

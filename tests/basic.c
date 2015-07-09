@@ -79,7 +79,6 @@ END_TEST START_TEST(test_utils)
 END_TEST START_TEST(test_init)
 {
 
-  int rc;
   u2fs_ctx_t *ctx;
 
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);

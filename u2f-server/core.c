@@ -1138,8 +1138,6 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   uint32_t counter_num;
   uint32_t counter;
   u2fs_ECDSA_t *signature;
-  int i;
-  int mask;
   u2fs_rc rc;
 
   if (ctx == NULL || response == NULL || output == NULL)

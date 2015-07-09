@@ -56,6 +56,7 @@ void crypto_init(void)
 void crypto_release(void)
 {
   RAND_cleanup();
+  ERR_free_strings();
 }
 
 u2fs_rc set_random_bytes(char *data, size_t len)

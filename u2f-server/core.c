@@ -294,7 +294,7 @@ const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result)
  * will be ignored.
  *
  * Returns: On success #U2FS_OK is returned, and on errors a #u2fs_rc error code.
- * The value @verified is set to #U2FS_OK on a successful authenticaiton, and to 0 otherwise
+ * The value @verified is set to #U2FS_OK on a successful authentication, and to 0 otherwise
  * @counter is filled with the value of the counter provided by the token.
  * A @user_presence value of 1 will determine the actual presence
  * of the user (yubikey touched) during the authentication.

@@ -283,6 +283,25 @@ const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result)
 }
 
 /**
+ * u2fs_get_registration_attestation:
+ * @result: a registration result obtained from u2fs_registration_verify()
+ *
+ * Extract the X509 attestation certificate obtained during the U2F
+ * registration operation.  The memory is allocated by the library,
+ * and must not be deallocated by the caller.
+ *
+ * Returns: On success the pointer to the buffer containing the attestation
+ * certificate is returned, and on errors NULL.
+ */
+u2fs_X509_t *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
+{
+  if (result == NULL)
+    return NULL;
+
+  return result->attestation_certificate;
+}
+
+/**
  * u2fs_get_authentication_result:
  * @result: an authentication result obtained from u2fs_authentication_verify()
  * @verified: output parameter for the authentication result

@@ -751,6 +751,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   registrationData = NULL;
   clientData = NULL;
   keyHandle = NULL;
+  *output = NULL;
 
   rc = parse_registration_response(response, &registrationData,
                                    &clientData);
@@ -1150,6 +1151,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   challenge = NULL;
   origin = NULL;
   signature = NULL;
+  *output = NULL;
 
   rc = parse_authentication_response(response, &signatureData,
                                      &clientData, &keyHandle);

@@ -279,7 +279,7 @@ void free_sig(u2fs_ECDSA_t * sig)
 
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 {
-  //TODO add PEM
+  //TODO add PEM - current output is openssl octet string
 
   if (key == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
@@ -315,6 +315,39 @@ u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 
   return U2FS_OK;
 
+}
+
+u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
+{
+  //input: openssl X509 certificate
+  //output: PEM-formatted char buffer
+
+  if (cert == NULL || output == NULL)
+    return U2FS_MEMORY_ERROR;
+
+  *output = NULL;
+
+  BIO *bio = BIO_new(BIO_s_mem());
+  if (bio == NULL)
+    return U2FS_MEMORY_ERROR;
+
+  if(!PEM_write_bio_X509(bio, (X509 *)cert)) {
+    BIO_free(bio);
+    return U2FS_CRYPTO_ERROR;
+  }
+
+  char *PEM_data;
+  int length = BIO_get_mem_data(bio, &PEM_data);
+  *output = malloc(length);
+  if (*output == NULL) {
+    BIO_free(bio);
+    return U2FS_MEMORY_ERROR;
+  }
+
+  memcpy(*output, PEM_data, length);
+  BIO_free(bio);
+
+  return U2FS_OK;
 }
 
 #ifdef MAKE_CHECK
@@ -383,7 +416,7 @@ END_TEST START_TEST(test_dup_key)
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
   key2 = dup_key(key);
   ck_assert(key2 != NULL);
-  //ck_assert(memcmp(key, key2, sizeof(key)));  
+  //ck_assert(memcmp(key, key2, sizeof(key)));
 
 }
 

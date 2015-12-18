@@ -245,7 +245,7 @@ u2fs_set_publicKey(u2fs_ctx_t * ctx, const unsigned char *publicKey)
  * @result: a registration result obtained from u2fs_registration_verify()
  *
  * Get the Base64 keyHandle obtained during the U2F registration
- * operation.  The memory is allocate by the library, and must not be
+ * operation.  The memory is allocated by the library, and must not be
  * deallocated by the caller.
  *
  * Returns: On success the pointer to the buffer containing the keyHandle

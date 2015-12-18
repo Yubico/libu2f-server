@@ -293,12 +293,12 @@ const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result)
  * Returns: On success the pointer to the buffer containing the attestation
  * certificate is returned, and on errors NULL.
  */
-u2fs_X509_t *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
+const void *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
 {
   if (result == NULL)
     return NULL;
 
-  return result->attestation_certificate;
+  return (void*)result->attestation_certificate;
 }
 
 /**

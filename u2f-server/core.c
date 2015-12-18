@@ -48,7 +48,7 @@ static u2fs_rc encode_b64u(const char *data, size_t data_len, char *output)
   base64_encodestate b64;
   int cnt;
 
-  if (data_len > _B64_BUFSIZE || output == NULL)
+  if ((data_len * 4) >= (_B64_BUFSIZE * 3) || output == NULL)	//base64 is 75% efficient (4 characters encode 3 bytes)
     return U2FS_MEMORY_ERROR;
 
   base64_init_encodestate(&b64);

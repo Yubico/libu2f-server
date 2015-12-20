@@ -329,7 +329,7 @@ u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
 
   if(!PEM_write_bio_X509(bio, (X509 *)cert)) {
     BIO_free(bio);
-    output = NULL;
+    *output = NULL;
     return U2FS_CRYPTO_ERROR;
   }
 

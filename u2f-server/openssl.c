@@ -279,7 +279,7 @@ void free_sig(u2fs_ECDSA_t * sig)
 
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 {
-  //TODO add PEM
+  //TODO add PEM - current output is openssl octet string
 
   if (key == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
@@ -312,6 +312,18 @@ u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 
   EC_GROUP_free(ecg);
   ecg = NULL;
+
+  return U2FS_OK;
+
+}
+
+u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
+{
+  //input: openssl X509 certificate
+  //output: PEM-formatted char buffer
+
+  if (cert == NULL || output == NULL)
+    return U2FS_MEMORY_ERROR;
 
   return U2FS_OK;
 
@@ -383,7 +395,7 @@ END_TEST START_TEST(test_dup_key)
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
   key2 = dup_key(key);
   ck_assert(key2 != NULL);
-  //ck_assert(memcmp(key, key2, sizeof(key)));  
+  //ck_assert(memcmp(key, key2, sizeof(key)));
 
 }
 

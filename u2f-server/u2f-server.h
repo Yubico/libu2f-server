@@ -111,7 +111,7 @@ extern "C" {
 
   const char *u2fs_get_registration_keyHandle(u2fs_reg_res_t * result);
   const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result);
-  const void *u2fs_get_registration_attestation(u2fs_reg_res_t * result);
+  const char *u2fs_get_registration_attestation(u2fs_reg_res_t * result);
 
   void u2fs_free_reg_res(u2fs_reg_res_t * result);
 

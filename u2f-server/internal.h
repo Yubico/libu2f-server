@@ -49,6 +49,7 @@ extern int debug;
 struct u2fs_reg_res {
   char *keyHandle;
   char *publicKey;
+  char *attestation_certificate_PEM;
   u2fs_EC_KEY_t *user_public_key;
   u2fs_X509_t *attestation_certificate;
 };

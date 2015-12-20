@@ -131,6 +131,14 @@ void u2fs_free_reg_res(u2fs_reg_res_t * result)
       free(result->keyHandle);
       result->keyHandle = NULL;
     }
+    if (result->publicKey) {
+      free(result->publicKey);
+      result->publicKey = NULL;
+    }
+    if (result->attestation_certificate_PEM) {
+      free(result->attestation_certificate_PEM);
+      result->attestation_certificate_PEM = NULL;
+    }
     if (result->user_public_key) {
       free_key(result->user_public_key);
       result->user_public_key = NULL;
@@ -286,19 +294,19 @@ const char *u2fs_get_registration_publicKey(u2fs_reg_res_t * result)
  * u2fs_get_registration_attestation:
  * @result: a registration result obtained from u2fs_registration_verify()
  *
- * Extract the X509 attestation certificate obtained during the U2F
+ * Extract the X509 attestation certificate (PEM format) obtained during the U2F
  * registration operation.  The memory is allocated by the library,
  * and must not be deallocated by the caller.
  *
  * Returns: On success the pointer to the buffer containing the attestation
  * certificate is returned, and on errors NULL.
  */
-const void *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
+const char *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
 {
   if (result == NULL)
     return NULL;
 
-  return (void*)result->attestation_certificate;
+  return (void*)result->attestation_certificate_PEM;
 }
 
 /**
@@ -847,7 +855,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   free_sig(signature);
   signature = NULL;
 
-  *output = calloc(1, sizeof(**output));
+  *output = calloc(1, sizeof(**output));        //allocate and zero-initialize
   if (*output == NULL) {
     rc = U2FS_MEMORY_ERROR;
     goto failure;
@@ -864,6 +872,10 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   (*output)->attestation_certificate = dup_cert(attestation_certificate);
 
   rc = dump_user_key(key_ptr, &(*output)->publicKey);
+  if (rc != U2FS_OK)
+    goto failure;
+
+  rc = dump_X509_cert(attestation_certificate, &(*output)->attestation_certificate_PEM);
   if (rc != U2FS_OK)
     goto failure;
 

@@ -325,6 +325,20 @@ u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
   if (cert == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
+  BIO *bio = BIO_new(BIO_s_mem());
+
+  if(!PEM_write_bio_X509(bio, (X509 *)cert)) {
+    BIO_free(bio);
+    output = NULL;
+    return U2FS_CRYPTO_ERROR;
+  }
+
+  char* PEM_data;
+  int length = BIO_get_mem_data(bio, &PEM_data);
+  *output = malloc(length);
+  memcpy(*output, PEM_data, length);
+  BIO_free(bio);
+
   return U2FS_OK;
 
 }

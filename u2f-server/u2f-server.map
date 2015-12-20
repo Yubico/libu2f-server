@@ -40,6 +40,7 @@ U2F_SERVER_0.0.0
     u2fs_get_registration_result;
     u2fs_get_registration_keyHandle;
     u2fs_get_registration_publicKey;
+    u2fs_get_registration_attestation;
     u2fs_global_done;
     u2fs_global_init;
     u2fs_init;

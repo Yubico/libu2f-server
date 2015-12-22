@@ -1,7 +1,7 @@
 = LIBU2F-SERVER(1)
 :doctype:	manpage
 :man source:	libu2f-server
-:man version:	1.0.1
+:man version:	1.0.2
 
 == NAME
 libu2f-server - Yubico Universal 2nd Factor (U2F) Server Tool

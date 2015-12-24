@@ -131,10 +131,7 @@ void u2fs_free_reg_res(u2fs_reg_res_t * result)
       free(result->keyHandle);
       result->keyHandle = NULL;
     }
-    if (result->user_public_key) {
-      free_key(result->user_public_key);
-      result->user_public_key = NULL;
-    }
+
     if (result->attestation_certificate) {
       free_cert(result->attestation_certificate);
       result->attestation_certificate = NULL;
@@ -841,8 +838,11 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
 
   u2fs_EC_KEY_t *key_ptr;
   (*output)->keyHandle = strndup(buf, strlen(buf));
-  decode_user_key(user_public_key, &key_ptr);
-  (*output)->user_public_key = key_ptr;
+
+  rc = decode_user_key(user_public_key, &key_ptr);
+  if (rc != U2FS_OK)
+    goto failure;
+
   (*output)->attestation_certificate = dup_cert(attestation_certificate);
 
   rc = dump_user_key(key_ptr, &(*output)->publicKey);
@@ -850,7 +850,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
     goto failure;
 
   if ((*output)->keyHandle == NULL
-      || (*output)->user_public_key == NULL
+      || (*output)->publicKey == NULL
       || (*output)->attestation_certificate == NULL) {
     rc = U2FS_MEMORY_ERROR;
     goto failure;

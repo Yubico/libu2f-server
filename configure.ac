@@ -63,7 +63,7 @@ PKG_CHECK_MODULES([LIBSSL], [libssl], [], [])
 
 PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [], [])
 
-PKG_CHECK_MODULES([CHECK], [check], [], [])
+PKG_CHECK_MODULES([CHECK], [check], [], [AC_MSG_NOTICE(Check package not found `make check` won't work)])
 
 AC_ARG_ENABLE([coverage],
               [AS_HELP_STRING([--enable-coverage],

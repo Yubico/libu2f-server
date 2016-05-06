@@ -76,7 +76,7 @@ AC_ARG_ENABLE([h2a],
               [AS_HELP_STRING([--enable-h2a],
                               [generate asciidoc manpages])],
                               [enable_h2a=$enableval],
-                              [enable_h2a=yes])
+                              [enable_h2a=no])
 AM_CONDITIONAL([ENABLE_H2A],[test '!' "$enable_h2a" = no])
 
 AC_ARG_ENABLE([gcc-warnings],

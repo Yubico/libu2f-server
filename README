@@ -208,8 +208,9 @@ This will create a directory 'libu2f-server'.  Enter the directory:
   $ cd libu2f-server
 -----------
 
-Autoconf, automake and libtool must be installed.  Help2man is used to
-generate the manpages.
+Autoconf, automake and libtool must be installed. Help2man is used to
+generate the manpages. Gengetopt is needed for command line parameter
+handling
 
 Generate the build system using:
 

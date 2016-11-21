@@ -63,7 +63,16 @@ PKG_CHECK_MODULES([LIBSSL], [libssl], [], [])
 
 PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [], [])
 
-PKG_CHECK_MODULES([CHECK], [check], [], [AC_MSG_NOTICE(Check package not found `make check` won't work)])
+AC_ARG_ENABLE([tests],
+              [AS_HELP_STRING([--enable-tests],
+                              [use check to run the unit tests])],
+                              [enable_tests=$enableval],
+                              [enable_tests=no])
+AM_CONDITIONAL([ENABLE_TESTS],[test '!' "$enable_tests" = no])
+if test '!' "$enable_tests" = no; then
+  PKG_CHECK_MODULES([CHECK], [check], [], [AC_MSG_NOTICE(Check package not found `make check` won't work)])
+fi
+
 
 AC_ARG_ENABLE([coverage],
               [AS_HELP_STRING([--enable-coverage],
@@ -123,11 +132,15 @@ AC_CONFIG_FILES([
   Makefile
   gtk-doc/Makefile
   src/Makefile
-  tests/Makefile
   u2f-server/Makefile
   u2f-server/u2f-server-version.h
   u2f-server/u2f-server.pc
 ])
+if test '!' "$enable_tests" = no; then
+  AC_CONFIG_FILES([
+    tests/Makefile
+  ])
+fi
 AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:

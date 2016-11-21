@@ -175,7 +175,7 @@ portability and ease of use.  If you downloaded a tarball, build it as
 follows.
 
 -----------
-  $ ./configure --enable-gtk-doc
+  $ ./configure --enable-gtk-doc --enable-tests
   $ make check && sudo make install
 -----------
 

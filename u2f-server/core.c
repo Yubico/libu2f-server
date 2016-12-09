@@ -406,10 +406,13 @@ static int registration_challenge_json(const char *challenge,
     rc = U2FS_OK;
 
 done:
-  json_object_put(json_challenge);
-  json_object_put(json_version);
-  json_object_put(json_appid);
-  json_object_put(json_output);
+  if (json_output) {
+    json_object_put(json_output);
+  } else {
+    json_object_put(json_challenge);
+    json_object_put(json_version);
+    json_object_put(json_appid);
+  }
 
   return rc;
 }
@@ -981,11 +984,14 @@ static int authentication_challenge_json(const char *challenge,
     rc = U2FS_OK;
 
 done:
-  json_object_put(json_challenge);
-  json_object_put(json_key);
-  json_object_put(json_version);
-  json_object_put(json_appid);
-  json_object_put(json_output);
+  if (json_output) {
+    json_object_put(json_output);
+  } else {
+    json_object_put(json_challenge);
+    json_object_put(json_key);
+    json_object_put(json_version);
+    json_object_put(json_appid);
+  }
 
   return rc;
 }

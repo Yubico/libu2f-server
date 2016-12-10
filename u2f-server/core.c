@@ -378,6 +378,7 @@ static int registration_challenge_json(const char *challenge,
   struct json_object *json_version = NULL;
   struct json_object *json_appid = NULL;
   struct json_object *json_output = NULL;
+  const char *json_string = NULL;
 
   rc = U2FS_JSON_ERROR;
 
@@ -399,8 +400,11 @@ static int registration_challenge_json(const char *challenge,
   json_object_object_add(json_output, "version", json_version);
   json_object_object_add(json_output, "appId", json_appid);
 
-  *output = strdup(json_object_to_json_string(json_output));
-  if (*output == NULL)
+  json_string = json_object_to_json_string(json_output);
+
+  if (json_string == NULL)
+    rc = U2FS_JSON_ERROR;
+  else if ((*output = strdup(json_string)) == NULL)
     rc = U2FS_MEMORY_ERROR;
   else
     rc = U2FS_OK;
@@ -952,6 +956,7 @@ static int authentication_challenge_json(const char *challenge,
   struct json_object *json_version = NULL;
   struct json_object *json_appid = NULL;
   struct json_object *json_output = NULL;
+  const char *json_string = NULL;
 
   rc = U2FS_JSON_ERROR;
 
@@ -977,8 +982,11 @@ static int authentication_challenge_json(const char *challenge,
   json_object_object_add(json_output, "challenge", json_challenge);
   json_object_object_add(json_output, "appId", json_appid);
 
-  *output = strdup(json_object_to_json_string(json_output));
-  if (*output == NULL)
+  json_string = json_object_to_json_string(json_output);
+
+  if (json_string == NULL)
+    rc = U2FS_JSON_ERROR;
+  else if ((*output = strdup(json_string)) == NULL)
     rc = U2FS_MEMORY_ERROR;
   else
     rc = U2FS_OK;

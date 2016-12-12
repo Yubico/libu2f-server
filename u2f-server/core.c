@@ -401,7 +401,6 @@ static int registration_challenge_json(const char *challenge,
   json_object_object_add(json_output, "appId", json_appid);
 
   json_string = json_object_to_json_string(json_output);
-
   if (json_string == NULL)
     rc = U2FS_JSON_ERROR;
   else if ((*output = strdup(json_string)) == NULL)

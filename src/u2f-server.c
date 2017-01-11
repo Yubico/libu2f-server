@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 {
   int exit_code = EXIT_FAILURE;
   struct gengetopt_args_info args_info;
-  char buf[BUFSIZ];
+  char buf[8192];
   char *p;
   u2fs_ctx_t *ctx;
   u2fs_reg_res_t *reg_result;

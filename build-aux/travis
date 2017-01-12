@@ -16,7 +16,7 @@ else
 fi
 
 ./autogen.sh
-./configure --disable-h2a $COVERAGE --enable-tests
+./configure $COVERAGE --enable-tests
 make check
 
 if [[ ! -z "$COVERAGE" ]]; then

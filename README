@@ -159,56 +159,42 @@ which will report either a successful or a failed authentication.
 For successful authentication the counter value and the user
 presence value will be printed as well.
 
-[[building]]
 Building
 --------
 
-This project uses 'autoconf', 'automake' and 'libtool' to achieve
-portability and ease of use.  If you downloaded a tarball, build it as
-follows.
+This project has a handful of Dependencies that must be satisfied prior to
+build -- consult `build-aux/travis` for insights if you run into issues.
 
+Autotools are required, this includes `autoconf`, `automake` and `libtool`,
+`check`  is only required for tests, and the library will build with out.
+
+Debian:
+-----------
+  # apt-get install check gengetopt gtk-doc-tools help2man libssl-dev libjson-c-dev
+-----------
+
+RHEL:
+-----------
+  # yum install check-devel gengetopt gtk-doc help2man openssl-devel json-c-devel
+-----------
+
+macOS:
+-----------
+  $ brew install check gengetopt gtk-doc help2man json-c openssl pkg-config
+  $ export PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig
+-----------
+
+Building from a release tarball:
 -----------
   $ ./configure --enable-gtk-doc --enable-tests
-  $ make check && sudo make install
+  $ make && make check
+  # make install
 -----------
 
-The JSON library is needed, see: +
-https://github.com/json-c/json-c/wiki +
-Debian:	+apt-get install libjson0-dev+ +
-
-You will also need OpenSSL: +
-https://www.openssl.org/ +
-Debian:	+apt-get install libssl-dev+ +
-
-In order to perform self tests with +make check+,
-the Check Framework should be installed. However this is not required
-to build the library. +
-http://check.sourceforge.net/ +
-Debian:	+apt-get install check+ +
-
-Building from Git
------------------
-
-You may check out the sources using Git with the following command:
-
+From source:
 -----------
-  $ git clone git://github.com/Yubico/libu2f-server.git
+  $ ./autogen.sh
+  $ ./configure --enable-gtk-doc --enable-tests
+  $ make && make check
+  # make install
 -----------
-
-This will create a directory 'libu2f-server'.  Enter the directory:
-
------------
-  $ cd libu2f-server
------------
-
-Autoconf, automake and libtool must be installed. Help2man is used to
-generate the manpages. Gengetopt is needed for command line parameter
-handling
-
-Generate the build system using:
-
------------
-  $ autoreconf --install
------------
-
-Then build as usual, see above under <<building,Building>>.

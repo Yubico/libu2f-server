@@ -185,6 +185,7 @@ macOS:
 -----------
 
 Building from a release tarball:
+
 -----------
   $ ./configure --enable-gtk-doc --enable-tests
   $ make && make check
@@ -192,6 +193,7 @@ Building from a release tarball:
 -----------
 
 From source:
+
 -----------
   $ ./autogen.sh
   $ ./configure --enable-gtk-doc --enable-tests

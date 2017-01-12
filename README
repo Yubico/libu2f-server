@@ -1,6 +1,7 @@
 Yubico Universal 2nd Factor (U2F) Server C Library
 ==================================================
 
+image:https://img.shields.io/badge/License-BSD%202--Clause-orange.svg["License, link=https://opensource.org/licenses/BSD-2-Clause"]
 image:https://travis-ci.org/Yubico/libu2f-server.svg?branch=master["Build Status", link="https://travis-ci.org/Yubico/libu2f-server"]
 image:https://coveralls.io/repos/Yubico/libu2f-server/badge.svg?branch=master["Coverage Status", link="https://coveralls.io/r/Yubico/libu2f-server?branch=master"]
 image:https://scan.coverity.com/projects/5685/badge.svg["Coverity Status", link=https://scan.coverity.com/projects/5685]
@@ -24,14 +25,6 @@ current version of this library does not do so.  This is a known
 limitation, and we hope to address this as soon as possible.  Please
 be sure to understand the implication of this before using the
 library.
-
-License
--------
-
-The project is licensed under a BSD license. See the file COPYING for
-exact wording. For any copyright year range specified as YYYY-ZZZZ in
-this package note that the range specifies every single year in that
-closed interval.
 
 Versioning
 ----------

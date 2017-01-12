@@ -219,9 +219,3 @@ Generate the build system using:
 -----------
 
 Then build as usual, see above under <<building,Building>>.
-
-Portability
------------
-
-The main development platform is Debian GNU/Linux and it should be
-well supported.

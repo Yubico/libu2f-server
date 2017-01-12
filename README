@@ -225,14 +225,3 @@ Portability
 
 The main development platform is Debian GNU/Linux and it should be
 well supported.
-
-Namespaces
-----------
-
-......
-Project name: Yubico Universal 2nd Factor (U2F) Server C Library
-Short name: libu2f-server
-Symbol prefix: u2fs_
-Tool: u2f-server
-Pkg-config: u2f-server
-......

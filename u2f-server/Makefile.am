@@ -27,7 +27,7 @@
 
 AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -I$(srcdir)/.. -I$(builddir)/..
-AM_CPPFLAGS += $(LIBJSON_CFLAGS) $(LIBSSL_CFLAGS)
+AM_CPPFLAGS += $(LIBJSON_CFLAGS) $(LIBSSL_CFLAGS) $(LIBCRYPTO_CFLAGS)
 
 lib_LTLIBRARIES = libu2f-server.la
 u2f_server_includedir = $(includedir)/u2f-server
@@ -43,7 +43,7 @@ libu2f_server_la_SOURCES += cencode.c cdecode.c b64/cencode.h b64/cdecode.h
 libu2f_server_la_SOURCES += crypto.h
 libu2f_server_la_SOURCES += openssl.c
 
-libu2f_server_la_LIBADD = $(HIDAPI_LIBS) $(LIBJSON_LIBS) $(LIBSSL_LIBS)
+libu2f_server_la_LIBADD = $(HIDAPI_LIBS) $(LIBJSON_LIBS) $(LIBSSL_LIBS) $(LIBCRYPTO_LIBS)
 
 libu2f_server_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

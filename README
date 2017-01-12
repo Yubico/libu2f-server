@@ -170,24 +170,24 @@ Autotools are required, this includes `autoconf`, `automake` and `libtool`,
 
 Debian:
 -----------
-  # apt-get install check gengetopt gtk-doc-tools help2man libssl-dev libjson-c-dev
+  # apt-get install check gengetopt help2man libssl-dev libjson-c-dev
 -----------
 
 RHEL:
 -----------
-  # yum install check-devel gengetopt gtk-doc help2man openssl-devel json-c-devel
+  # yum install check-devel gengetopt help2man openssl-devel json-c-devel
 -----------
 
 macOS:
 -----------
-  $ brew install check gengetopt gtk-doc help2man json-c openssl pkg-config
+  $ brew install check gengetopt help2man json-c openssl pkg-config
   $ export PKG_CONFIG_PATH=$(brew --prefix openssl)/lib/pkgconfig
 -----------
 
 Building from a release tarball:
 
 -----------
-  $ ./configure --enable-gtk-doc --enable-tests
+  $ ./configure --enable-tests
   $ make && make check
   # make install
 -----------
@@ -196,7 +196,7 @@ From source:
 
 -----------
   $ ./autogen.sh
-  $ ./configure --enable-gtk-doc --enable-tests
+  $ ./configure --enable-tests
   $ make && make check
   # make install
 -----------

@@ -57,7 +57,6 @@ endif
 
 clean-local:
 	rm -f $(top_builddir)/man/*.[1-9]
-	rm -f $(top_builddir)/man/*.[1-9].txt
 
 if ENABLE_COV
 AM_CFLAGS += --coverage

@@ -43,6 +43,7 @@ AC_SUBST(LT_AGE, 0)
 AM_INIT_AUTOMAKE([gnits dist-xz no-dist-gzip std-options -Wall])
 AM_SILENT_RULES([yes])
 AC_PROG_CC
+AC_USE_SYSTEM_EXTENSIONS
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 

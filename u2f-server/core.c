@@ -29,6 +29,7 @@
 
 #include "internal.h"
 
+#include <string.h>
 #include <unistd.h>
 #include <json.h>
 #include "crypto.h"

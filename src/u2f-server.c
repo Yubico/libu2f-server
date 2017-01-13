@@ -205,6 +205,20 @@ int main(int argc, char *argv[])
       exit(EXIT_FAILURE);
     }
 
+    if (args_info.x509cert_given) {
+      const char *pem = u2fs_get_registration_attestation(reg_result);
+      FILE *fp = fopen(args_info.x509cert_arg, "w");
+      if (fp == NULL) {
+        perror("fopen");
+        exit(EXIT_FAILURE);
+      }
+      size_t fwlen = fwrite(pem, 1, strlen(pem), fp);
+      if (fwlen != strlen(pem)) {
+        perror("fwrite");
+        exit(EXIT_FAILURE);
+      }
+      fclose(fp);
+    }
 
     if (args_info.key_handle_given) {
       FILE *fp;

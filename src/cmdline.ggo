@@ -34,3 +34,4 @@ option "action" a "Action to take." values="register","authenticate" enum
 option "key-handle" k "A file containing a key-handle" string optional
 option "user-key" p "A file containing the public user-key" string optional
 option "debug" d "Print debug information to standard error" flag off
+option "x509cert" x "A file to write the registration attestation certificate to" string optional

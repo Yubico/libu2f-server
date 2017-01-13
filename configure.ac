@@ -25,7 +25,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([libu2f-server], [1.0.2], [yubico-devel@googlegroups.com])
+AC_PREQ([2.69])
+
+AC_INIT([libu2f-server], [1.0.2],
+  [https://github.com/Yubico/libu2f-server/issues],
+  [libu2f-server],
+  [https://developers.yubico.com/libu2f-server])
+
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 

@@ -43,8 +43,15 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll])
 
 GTK_DOC_CHECK(1.1)
-AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(HELP2ADOC, help2adoc, $missing_dir)
+AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
+if ! which help2man >/dev/null ; then
+   AC_MSG_ERROR([help2man missing])
+fi
+if ! which gengetopt >/dev/null ; then
+   AC_MSG_ERROR([gengetopt missing])
+fi
+
 gl_LD_VERSION_SCRIPT
 
 PKG_CHECK_MODULES([LIBJSON], [json-c], [], [
@@ -70,7 +77,7 @@ AC_ARG_ENABLE([tests],
                               [enable_tests=no])
 AM_CONDITIONAL([ENABLE_TESTS],[test '!' "$enable_tests" = no])
 if test '!' "$enable_tests" = no; then
-  PKG_CHECK_MODULES([CHECK], [check], [], [AC_MSG_NOTICE(Check package not found `make check` won't work)])
+  PKG_CHECK_MODULES([CHECK], [check], [], [AC_MSG_ERROR(`check` not found)])
 fi
 
 

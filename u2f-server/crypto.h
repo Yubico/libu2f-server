@@ -63,5 +63,6 @@ u2fs_EC_KEY_t *dup_key(const u2fs_EC_KEY_t * key);
 u2fs_X509_t *dup_cert(const u2fs_X509_t * cert);
 
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output);
+u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output);
 
 #endif

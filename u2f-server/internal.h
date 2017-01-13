@@ -50,6 +50,9 @@ struct u2fs_reg_res {
   char *keyHandle;
   char *publicKey;
   u2fs_X509_t *attestation_certificate;
+
+  char *attestation_certificate_PEM;
+  u2fs_EC_KEY_t *user_public_key;
 };
 
 struct u2fs_auth_res {

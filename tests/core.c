@@ -219,6 +219,22 @@ END_TEST START_TEST(registration_verify_ok)
   p = u2fs_get_registration_publicKey(res);
   ck_assert_int_eq(memcmp(p, userkey_dat, U2FS_PUBLIC_KEY_LEN), 0);
 
+  ck_assert_str_eq(u2fs_get_registration_attestation(res),
+  "-----BEGIN CERTIFICATE-----\n"
+  "MIICGzCCAQWgAwIBAgIEdaP2dTALBgkqhkiG9w0BAQswLjEsMCoGA1UEAxMjWXVi\n"
+  "aWNvIFUyRiBSb290IENBIFNlcmlhbCA0NTcyMDA2MzEwIBcNMTQwODAxMDAwMDAw\n"
+  "WhgPMjA1MDA5MDQwMDAwMDBaMCoxKDAmBgNVBAMMH1l1YmljbyBVMkYgRUUgU2Vy\n"
+  "aWFsIDE5NzM2Nzk3MzMwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQZo35Damtp\n"
+  "l81YdmcbhEuXKAr7xDcQzAy5n3ftAAhtBbu8EeGU4ynfSgLonckqX6J2uXLBppTN\n"
+  "E3v2bt+Yf8MLoxIwEDAOBgorBgEEAYLECgECBAAwCwYJKoZIhvcNAQELA4IBAQG9\n"
+  "LbiNPgs0sQYOHAJcg+lMk+HCsiWRlYVnbT4I/5lnqU907vY17XYAORd432bU3Nnh\n"
+  "sbkvjz76kQJGXeNAF4DPANGGlz8JU+LNEVE2PWPGgEM0GXgB7mZN5Sinfy1AoOdO\n"
+  "+3c3bfdJQuXlUxHbo+nDpxxKpzq9gr++RbokF1+0JBkMbaA/qLYL4WdhY5NvaOyM\n"
+  "vYpO3sBxlzn6FcP67hlotGH1wU7qhCeh+uur7zDeAWVh7c4QtJOXHkLJQfV3Z7ZM\n"
+  "vhkIA6jZJAX99hisABU/SSa5DtgX7AfsHwa04h69AAAWDUzSk3HgOXbUd1FaSOPd\n"
+  "lVFkG2N2JllFHykyO3zO\n"
+  "-----END CERTIFICATE-----\n");
+
   u2fs_free_reg_res(res);
   u2fs_done(ctx);
   u2fs_global_done();

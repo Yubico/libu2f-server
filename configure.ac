@@ -158,12 +158,14 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:
 
-  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $U2FS_VERSION_MAJOR minor $U2FS_VERSION_MINOR patch $U2FS_VERSION_PATCH number $U2FS_VERSION_NUMBER
+  Version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $U2FS_VERSION_MAJOR minor $U2FS_VERSION_MINOR patch $U2FS_VERSION_PATCH number $U2FS_VERSION_NUMBER
   Host type:        ${host}
   Install prefix:   ${prefix}
   Compiler:         ${CC}
   Shared library:   ${enable_shared}
   Static library:   ${enable_static}
+  CFLAGS:           ${CFLAGS}
+  CPPFLAGS:         ${CPPFLAGS}
   JSON CFLAGS:      $LIBJSON_CFLAGS
   JSON LIBS:        $LIBJSON_LIBS
   OPENSSL CFLAGS:   $LIBSSL_CFLAGS

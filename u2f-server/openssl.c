@@ -41,11 +41,12 @@
 void dumpCert(const u2fs_X509_t * certificate)
 {
   X509 *cert = (X509 *) certificate;
-  BIO *STDout = BIO_new_fp(stderr, BIO_NOCLOSE);
+  BIO *out = BIO_new_fp(stderr, BIO_NOCLOSE);
 
-  X509_print_ex(STDout, cert, 0, 0);
+  (void)X509_print_ex(out, cert, 0, 0);
+  (void)PEM_write_bio_X509(out, cert);
 
-  BIO_free(STDout);
+  BIO_free(out);
 }
 
 void crypto_init(void)

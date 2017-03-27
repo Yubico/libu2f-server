@@ -25,7 +25,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-AC_INIT([libu2f-server], [1.0.2], [yubico-devel@googlegroups.com])
+AC_PREQ([2.69])
+
+AC_INIT([libu2f-server], [1.0.2],
+  [https://github.com/Yubico/libu2f-server/issues],
+  [libu2f-server],
+  [https://developers.yubico.com/libu2f-server])
+
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
@@ -37,6 +43,7 @@ AC_SUBST(LT_AGE, 0)
 AM_INIT_AUTOMAKE([gnits dist-xz no-dist-gzip std-options -Wall])
 AM_SILENT_RULES([yes])
 AC_PROG_CC
+AC_USE_SYSTEM_EXTENSIONS
 
 m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
@@ -152,12 +159,14 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:
 
-  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $U2FS_VERSION_MAJOR minor $U2FS_VERSION_MINOR patch $U2FS_VERSION_PATCH number $U2FS_VERSION_NUMBER
+  Version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE major $U2FS_VERSION_MAJOR minor $U2FS_VERSION_MINOR patch $U2FS_VERSION_PATCH number $U2FS_VERSION_NUMBER
   Host type:        ${host}
   Install prefix:   ${prefix}
   Compiler:         ${CC}
   Shared library:   ${enable_shared}
   Static library:   ${enable_static}
+  CFLAGS:           ${CFLAGS}
+  CPPFLAGS:         ${CPPFLAGS}
   JSON CFLAGS:      $LIBJSON_CFLAGS
   JSON LIBS:        $LIBJSON_LIBS
   OPENSSL CFLAGS:   $LIBSSL_CFLAGS

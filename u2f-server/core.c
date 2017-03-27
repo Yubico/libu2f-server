@@ -825,7 +825,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
     goto failure;
   }
 
-  if (strcmp(ctx->origin, origin) != 0) {
+  if (ctx->origin == NULL || strcmp(ctx->origin, origin) != 0) {
     rc = U2FS_ORIGIN_ERROR;
     goto failure;
   }

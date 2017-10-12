@@ -328,7 +328,7 @@ const char *u2fs_get_registration_attestation(u2fs_reg_res_t * result)
  * of the user (yubikey touched) during the authentication.
  */
 u2fs_rc u2fs_get_authentication_result(u2fs_auth_res_t * result,
-                                       int *verified,
+                                       u2fs_rc *verified,
                                        uint32_t * counter,
                                        uint8_t * user_presence)
 {

@@ -427,9 +427,9 @@ static int registration_challenge_json(const char *challenge,
   if (json_output == NULL)
     goto done;
 
-  json_object_object_add(json_output, "challenge", json_challenge);
-  json_object_object_add(json_output, "version", json_version);
-  json_object_object_add(json_output, "appId", json_appid);
+  json_object_object_add(json_output, "challenge", json_object_get(json_challenge));
+  json_object_object_add(json_output, "version", json_object_get(json_version));
+  json_object_object_add(json_output, "appId", json_object_get(json_appid));
 
   json_string = json_object_to_json_string(json_output);
   if (json_string == NULL)
@@ -440,13 +440,10 @@ static int registration_challenge_json(const char *challenge,
     rc = U2FS_OK;
 
 done:
-  if (json_output) {
     json_object_put(json_output);
-  } else {
     json_object_put(json_challenge);
     json_object_put(json_version);
     json_object_put(json_appid);
-  }
 
   return rc;
 }
@@ -1011,10 +1008,10 @@ static int authentication_challenge_json(const char *challenge,
   if (json_output == NULL)
     goto done;
 
-  json_object_object_add(json_output, "keyHandle", json_key);
-  json_object_object_add(json_output, "version", json_version);
-  json_object_object_add(json_output, "challenge", json_challenge);
-  json_object_object_add(json_output, "appId", json_appid);
+  json_object_object_add(json_output, "keyHandle", json_object_get(json_key));
+  json_object_object_add(json_output, "version", json_object_get(json_version));
+  json_object_object_add(json_output, "challenge", json_object_get(json_challenge));
+  json_object_object_add(json_output, "appId", json_object_get(json_appid));
 
   json_string = json_object_to_json_string(json_output);
 
@@ -1026,14 +1023,11 @@ static int authentication_challenge_json(const char *challenge,
     rc = U2FS_OK;
 
 done:
-  if (json_output) {
     json_object_put(json_output);
-  } else {
     json_object_put(json_challenge);
     json_object_put(json_key);
     json_object_put(json_version);
     json_object_put(json_appid);
-  }
 
   return rc;
 }

@@ -49,7 +49,6 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 LT_INIT([win32-dll])
 
-GTK_DOC_CHECK(1.1)
 AM_MISSING_PROG(HELP2ADOC, help2adoc, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 if ! which help2man >/dev/null ; then
@@ -144,7 +143,6 @@ AC_SUBST([U2FS_VERSION_NUMBER],
 
 AC_CONFIG_FILES([
   Makefile
-  gtk-doc/Makefile
   src/Makefile
   u2f-server/Makefile
   u2f-server/u2f-server-version.h

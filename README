@@ -38,9 +38,6 @@ backwards compatible, and +PATCH+ is incremented when minor changes are done.
 Usage
 -----
 
-The library usage is documented in the API manual, see gtk-doc/html/
-after you have built with +./configure --enable-gtk-doc+.
-
 There is a command line utility that is useful for debugging or
 testing.  We describe how you can use it here.
 

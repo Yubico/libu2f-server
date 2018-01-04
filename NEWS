@@ -1,6 +1,9 @@
 libu2f-server NEWS -- History of user-visible changes.          -*- outline -*-
 
-* Version 1.0.2 (unreleased)
+* Version 1.1.0 (released 2018-01-04)
+ ** Add the possibility to dump the attestation certificate.
+ ** Correctly handle the refcount of json-c objects.
+ ** General fixes and improvements.
 
 * Version 1.0.1 (released 2015-07-09)
  ** General fixes and improvements.

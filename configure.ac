@@ -27,7 +27,7 @@
 
 AC_PREQ([2.69])
 
-AC_INIT([libu2f-server], [1.0.2],
+AC_INIT([libu2f-server], [1.1.0],
   [https://github.com/Yubico/libu2f-server/issues],
   [libu2f-server],
   [https://developers.yubico.com/libu2f-server])
@@ -36,9 +36,9 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # http://www.gnu.org/s/libtool/manual/html_node/Updating-version-info.html
-AC_SUBST(LT_CURRENT, 0)
-AC_SUBST(LT_REVISION, 5)
-AC_SUBST(LT_AGE, 0)
+AC_SUBST(LT_CURRENT, 1)
+AC_SUBST(LT_REVISION, 0)
+AC_SUBST(LT_AGE, 1)
 
 AM_INIT_AUTOMAKE([gnits dist-xz no-dist-gzip std-options -Wall])
 AM_SILENT_RULES([yes])

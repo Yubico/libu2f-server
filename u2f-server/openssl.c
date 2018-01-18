@@ -51,13 +51,19 @@ void dumpCert(const u2fs_X509_t * certificate)
 
 void crypto_init(void)
 {
-  SSL_load_error_strings();
+  /* Crypto init functions are deprecated in openssl-1.1.0 */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+   SSL_load_error_strings();
+#endif
 }
 
 void crypto_release(void)
 {
+  /* Crypto deinit functions are deprecated in openssl-1.1.0. */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   RAND_cleanup();
   ERR_free_strings();
+#endif
 }
 
 u2fs_rc set_random_bytes(char *data, size_t len)

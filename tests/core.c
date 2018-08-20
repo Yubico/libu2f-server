@@ -69,7 +69,7 @@ END_TEST START_TEST(set_challenge)
   char *s = strdup(ctx->challenge);
   u2fs_done(ctx);
   ck_assert_int_eq(u2fs_init(&ctx), U2FS_OK);
-  ck_assert_int_eq(strlen(ctx->challenge), U2FS_CHALLENGE_B64U_LEN);
+  ck_assert_int_eq(strlen(ctx->challenge), 0);
   ck_assert_str_ne(ctx->challenge, s);
 
   free(s);

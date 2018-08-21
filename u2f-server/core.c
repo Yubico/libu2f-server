@@ -1083,40 +1083,33 @@ parse_authentication_response(const char *response, char **signatureData,
  *
  * Get a U2F authentication response and check its validity.
  *
- * Returns: On a successful verification %U2FS_OK (integer 0) is returned and @output is filled with the authentication result (same as the returned value), the counter received from the token and the user presence information. On errors
- * a #u2fs_rc error code is returned.
+ * Returns: On a successful verification %U2FS_OK (integer 0) is returned and @output is filled with the authentication result (same as the returned value), the counter received from the token and the user presence information. On errors a #u2fs_rc error code is returned.
  */
 u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
                                    u2fs_auth_res_t ** output)
 {
-  char *signatureData;
-  char *clientData;
-  char *clientData_decoded;
-  char *keyHandle;
-  char *challenge;
-  char *origin;
+  char *signatureData = NULL, *clientData = NULL, *clientData_decoded = NULL,
+    *keyHandle = NULL, *challenge = NULL, *origin = NULL;
   uint8_t user_presence;
   uint32_t counter_num;
   uint32_t counter;
-  u2fs_ECDSA_t *signature;
+  u2fs_ECDSA_t *signature = NULL;
   u2fs_rc rc;
+  struct sha256_state sha_ctx;
+  char challenge_parameter[U2FS_HASH_LEN],
+    application_parameter[U2FS_HASH_LEN];
+  unsigned char dgst[U2FS_HASH_LEN];
+
 
   if (ctx == NULL || response == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
-  signatureData = NULL;
-  clientData = NULL;
-  clientData_decoded = NULL;
-  keyHandle = NULL;
-  challenge = NULL;
-  origin = NULL;
-  signature = NULL;
   *output = NULL;
 
   rc = parse_authentication_response(response, &signatureData,
                                      &clientData, &keyHandle);
   if (rc != U2FS_OK)
-    goto failure;
+    goto done;
 
   if (debug) {
     fprintf(stderr, "signatureData: %s\n", signatureData);
@@ -1127,31 +1120,25 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   rc = parse_signatureData(signatureData, &user_presence,
                            &counter, &signature);
   if (rc != U2FS_OK)
-    goto failure;
+    goto done;
 
   rc = decode_clientData(clientData, &clientData_decoded);
-
   if (rc != U2FS_OK)
-    goto failure;
+    goto done;
 
   rc = parse_clientData(clientData_decoded, &challenge, &origin);
-
   if (rc != U2FS_OK)
-    goto failure;
+    goto done;
 
   if (strcmp(ctx->challenge, challenge) != 0) {
     rc = U2FS_CHALLENGE_ERROR;
-    goto failure;
+    goto done;
   }
 
   if (strcmp(ctx->origin, origin) != 0) {
     rc = U2FS_ORIGIN_ERROR;
-    goto failure;
+    goto done;
   }
-
-  struct sha256_state sha_ctx;
-  char challenge_parameter[U2FS_HASH_LEN],
-      application_parameter[U2FS_HASH_LEN];
 
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) ctx->appid,
@@ -1163,7 +1150,6 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
                  strlen(clientData_decoded));
   sha256_done(&sha_ctx, (unsigned char *) challenge_parameter);
 
-  unsigned char dgst[U2FS_HASH_LEN];
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) application_parameter,
                  U2FS_HASH_LEN);
@@ -1174,17 +1160,13 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_done(&sha_ctx, dgst);
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, ctx->key);
-
   if (rc != U2FS_OK)
-    goto failure;
-
-  free_sig(signature);
-  signature = NULL;
+    goto done;
 
   *output = calloc(1, sizeof(**output));
   if (*output == NULL) {
     rc = U2FS_MEMORY_ERROR;
-    goto failure;
+    goto done;
   }
 
   counter_num = 0;
@@ -1197,61 +1179,14 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   (*output)->user_presence = user_presence;
   (*output)->counter = counter_num;
 
-  free(origin);
-  origin = NULL;
-
-  free(challenge);
-  challenge = NULL;
-
-  free(keyHandle);
-  keyHandle = NULL;
-
-  free(signatureData);
-  signatureData = NULL;
-
-  free(clientData);
-  clientData = NULL;
-
+done:
   free(clientData_decoded);
-  clientData_decoded = NULL;
-
-  return U2FS_OK;
-
-failure:
-  if (clientData_decoded) {
-    free(clientData_decoded);
-    clientData_decoded = NULL;
-  }
-
-  if (challenge) {
-    free(challenge);
-    challenge = NULL;
-  }
-
-  if (origin) {
-    free(origin);
-    origin = NULL;
-  }
-
-  if (signature) {
-    free_sig(signature);
-    signature = NULL;
-  }
-
-  if (signatureData) {
-    free(signatureData);
-    signatureData = NULL;
-  }
-
-  if (clientData) {
-    free(clientData);
-    clientData = NULL;
-  }
-
-  if (keyHandle) {
-    free(keyHandle);
-    keyHandle = NULL;
-  }
+  free(challenge);
+  free(origin);
+  free_sig(signature);
+  free(signatureData);
+  free(clientData);
+  free(keyHandle);
 
   return rc;
 }

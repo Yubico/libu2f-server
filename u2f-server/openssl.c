@@ -357,7 +357,6 @@ u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
 
 START_TEST(test_errors)
 {
-
   u2fs_X509_t *cert = NULL;
   u2fs_ECDSA_t *sig = NULL;
   u2fs_EC_KEY_t *key = NULL;
@@ -394,15 +393,11 @@ START_TEST(test_errors)
   ck_assert_int_eq(decode_ECDSA(some_data, 5, &sig), U2FS_CRYPTO_ERROR);
   ck_assert_int_eq(decode_user_key(wrong_key, &key), U2FS_CRYPTO_ERROR);
 
-  //ck_assert_int_eq(dump_user_key(key, &output), U2FS_CRYPTO_ERROR);
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
-  //ck_assert_int_eq(extract_EC_KEY_from_X509(cert, &key), U2FS_CRYPTO_ERROR);
-
 }
 
 END_TEST START_TEST(test_dup_key)
 {
-
   u2fs_EC_KEY_t *key = NULL;
   u2fs_EC_KEY_t *key2 = NULL;
 
@@ -418,8 +413,6 @@ END_TEST START_TEST(test_dup_key)
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
   key2 = dup_key(key);
   ck_assert(key2 != NULL);
-  //ck_assert(memcmp(key, key2, sizeof(key)));
-
 }
 
 END_TEST Suite *u2fs_crypto_suite(void)
@@ -441,7 +434,6 @@ END_TEST Suite *u2fs_crypto_suite(void)
 
 int main(void)
 {
-
   int number_failed;
   Suite *s;
   SRunner *sr;
@@ -453,8 +445,5 @@ int main(void)
   number_failed = srunner_ntests_failed(sr);
   srunner_free(sr);
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-
-  return 0;
-
 }
 #endif

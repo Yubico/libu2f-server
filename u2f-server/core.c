@@ -61,6 +61,21 @@ static u2fs_rc encode_b64u(const char *data, size_t data_len, char *output)
   return U2FS_OK;
 }
 
+static u2fs_rc gen_challenge(u2fs_ctx_t *ctx)
+{
+  char buf[U2FS_CHALLENGE_RAW_LEN];
+  u2fs_rc rc;
+
+  if (ctx->challenge[0] != '\0')
+    return U2FS_OK;
+
+  rc = set_random_bytes(buf, U2FS_CHALLENGE_RAW_LEN);
+  if (rc != U2FS_OK)
+    return rc;
+
+  return encode_b64u(buf, U2FS_CHALLENGE_RAW_LEN, ctx->challenge);
+}
+
 /**
  * u2fs_init:
  * @ctx: pointer to output variable holding a context handle.
@@ -73,26 +88,8 @@ static u2fs_rc encode_b64u(const char *data, size_t data_len, char *output)
 u2fs_rc u2fs_init(u2fs_ctx_t ** ctx)
 {
   *ctx = calloc(1, sizeof(**ctx));
-
   if (*ctx == NULL)
     return U2FS_MEMORY_ERROR;
-
-  char buf[U2FS_CHALLENGE_RAW_LEN];
-  u2fs_rc rc;
-
-  rc = set_random_bytes(buf, U2FS_CHALLENGE_RAW_LEN);
-  if (rc != U2FS_OK) {
-    free(*ctx);
-    *ctx = NULL;
-    return rc;
-  }
-
-  rc = encode_b64u(buf, U2FS_CHALLENGE_RAW_LEN, (*ctx)->challenge);
-  if (rc != U2FS_OK) {
-    free(*ctx);
-    *ctx = NULL;
-    return rc;
-  }
 
   return U2FS_OK;
 }
@@ -461,6 +458,10 @@ done:
  */
 u2fs_rc u2fs_registration_challenge(u2fs_ctx_t * ctx, char **output)
 {
+  u2fs_rc rc = gen_challenge(ctx);
+  if (rc != U2FS_OK)
+    return rc;
+
   return registration_challenge_json(ctx->challenge, ctx->appid, output);
 }
 
@@ -814,6 +815,11 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
 
   rc = parse_clientData(clientData_decoded, &challenge, &origin);
 
+  if (rc != U2FS_OK)
+    goto failure;
+
+
+  rc = gen_challenge(ctx);
   if (rc != U2FS_OK)
     goto failure;
 
@@ -1351,8 +1357,14 @@ failure:
  */
 u2fs_rc u2fs_authentication_challenge(u2fs_ctx_t * ctx, char **output)
 {
+  u2fs_rc rc;
+
   if (ctx->keyHandle == NULL)
     return U2FS_MEMORY_ERROR;
+
+  rc = gen_challenge(ctx);
+  if (rc != U2FS_OK)
+    return rc;
 
   return authentication_challenge_json(ctx->challenge,
                                        ctx->keyHandle, ctx->appid, output);

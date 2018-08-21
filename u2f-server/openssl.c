@@ -209,47 +209,47 @@ u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,
 u2fs_rc extract_EC_KEY_from_X509(const u2fs_X509_t * cert,
                                  u2fs_EC_KEY_t ** key)
 {
+  EVP_PKEY *pkey = NULL;
+  EC_GROUP *ecg = NULL;
+  unsigned long err;
+  u2fs_rc rc = U2FS_CRYPTO_ERROR;
+
   if (cert == NULL || key == NULL)
     return U2FS_MEMORY_ERROR;
 
-  EVP_PKEY *pkey = X509_get_pubkey((X509 *) cert);
-
+  pkey = X509_get_pubkey((X509 *) cert);
   if (pkey == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
   *key = (u2fs_EC_KEY_t *) EVP_PKEY_get1_EC_KEY(pkey);
-
-  EVP_PKEY_free(pkey);
-  pkey = NULL;
-
   if (*key == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
 
   EC_KEY_set_asn1_flag((EC_KEY *) * key, OPENSSL_EC_NAMED_CURVE);
   EC_KEY_set_group((EC_KEY *) * key, ecg);
 
+  rc = U2FS_OK;
+done:
   EC_GROUP_free(ecg);
-  ecg = NULL;
-
-  return U2FS_OK;
+  if (rc != U2FS_OK)
+    *key = NULL;
+  return rc;
 }
 
 u2fs_EC_KEY_t *dup_key(const u2fs_EC_KEY_t * key)

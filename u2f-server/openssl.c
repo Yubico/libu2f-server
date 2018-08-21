@@ -280,44 +280,43 @@ void free_sig(u2fs_ECDSA_t * sig)
   ECDSA_SIG_free((ECDSA_SIG *) sig);
 }
 
+//TODO add PEM - current output is openssl octet string
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 {
-  //TODO add PEM - current output is openssl octet string
+  EC_GROUP *ecg = NULL;
+  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  const EC_POINT *point;
+  u2fs_rc rc = U2FS_MEMORY_ERROR;
 
   if (key == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
+  *output = NULL;
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
-  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
-
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
   if (ecg == NULL)
-    return U2FS_MEMORY_ERROR;
+    goto done;
 
-  const EC_POINT *point = EC_KEY_get0_public_key((EC_KEY *) key);
+  point = EC_KEY_get0_public_key((EC_KEY *) key);
 
   *output = malloc(U2FS_PUBLIC_KEY_LEN);
-
-  if (*output == NULL) {
-    EC_GROUP_free(ecg);
-    ecg = NULL;
-    return U2FS_MEMORY_ERROR;
-  }
+  if (*output == NULL)
+    goto done;
 
   if (EC_POINT_point2oct
       (ecg, point, pcf, (unsigned char *) *output, U2FS_PUBLIC_KEY_LEN,
        NULL) != U2FS_PUBLIC_KEY_LEN) {
-    free(ecg);
-    ecg = NULL;
-    free(*output);
-    *output = NULL;
-    return U2FS_CRYPTO_ERROR;
+    rc = U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
+  rc = U2FS_OK;
+done:
   EC_GROUP_free(ecg);
-  ecg = NULL;
-
-  return U2FS_OK;
-
+  if (rc != U2FS_OK) {
+    free(*output);
+    *output = NULL;
+  }
+  return rc;
 }
 
 u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)

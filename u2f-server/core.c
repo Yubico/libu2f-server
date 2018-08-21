@@ -408,39 +408,34 @@ static int registration_challenge_json(const char *challenge,
   struct json_object *json_output = NULL;
   const char *json_string = NULL;
 
-  rc = U2FS_JSON_ERROR;
-
   json_challenge = json_object_new_string(challenge);
-  if (json_challenge == NULL)
-    goto done;
   json_version = json_object_new_string(U2F_VERSION);
-  if (json_version == NULL)
-    goto done;
   json_appid = json_object_new_string(appid);
-  if (json_appid == NULL)
-    goto done;
-
   json_output = json_object_new_object();
-  if (json_output == NULL)
+  if (json_challenge == NULL || json_version == NULL || json_appid == NULL ||
+      json_output == NULL)
     goto done;
 
-  json_object_object_add(json_output, "challenge", json_object_get(json_challenge));
-  json_object_object_add(json_output, "version", json_object_get(json_version));
+  json_object_object_add(json_output, "challenge",
+                         json_object_get(json_challenge));
+  json_object_object_add(json_output, "version",
+                         json_object_get(json_version));
   json_object_object_add(json_output, "appId", json_object_get(json_appid));
 
   json_string = json_object_to_json_string(json_output);
   if (json_string == NULL)
-    rc = U2FS_JSON_ERROR;
-  else if ((*output = strdup(json_string)) == NULL)
-    rc = U2FS_MEMORY_ERROR;
-  else
-    rc = U2FS_OK;
+    goto done;
 
+  *output = strdup(json_string);
+  if (*output == NULL)
+    goto done;
+
+  rc = U2FS_OK;
 done:
-    json_object_put(json_output);
-    json_object_put(json_challenge);
-    json_object_put(json_version);
-    json_object_put(json_appid);
+  json_object_put(json_output);
+  json_object_put(json_challenge);
+  json_object_put(json_version);
+  json_object_put(json_appid);
 
   return rc;
 }
@@ -907,45 +902,37 @@ static int authentication_challenge_json(const char *challenge,
   struct json_object *json_output = NULL;
   const char *json_string = NULL;
 
-  rc = U2FS_JSON_ERROR;
-
   json_key = json_object_new_string(keyHandle);
-  if (json_key == NULL)
-    goto done;
   json_version = json_object_new_string(U2F_VERSION);
-  if (json_version == NULL)
-    goto done;
   json_challenge = json_object_new_string(challenge);
-  if (json_challenge == NULL)
-    goto done;
   json_appid = json_object_new_string(appid);
-  if (json_appid == NULL)
-    goto done;
-
   json_output = json_object_new_object();
-  if (json_output == NULL)
+  if (json_key == NULL || json_version == NULL || json_challenge == NULL ||
+      json_appid == NULL || json_output == NULL)
     goto done;
 
   json_object_object_add(json_output, "keyHandle", json_object_get(json_key));
-  json_object_object_add(json_output, "version", json_object_get(json_version));
-  json_object_object_add(json_output, "challenge", json_object_get(json_challenge));
+  json_object_object_add(json_output, "version",
+                         json_object_get(json_version));
+  json_object_object_add(json_output, "challenge",
+                         json_object_get(json_challenge));
   json_object_object_add(json_output, "appId", json_object_get(json_appid));
 
   json_string = json_object_to_json_string(json_output);
-
   if (json_string == NULL)
-    rc = U2FS_JSON_ERROR;
-  else if ((*output = strdup(json_string)) == NULL)
-    rc = U2FS_MEMORY_ERROR;
-  else
-    rc = U2FS_OK;
+    goto done;
 
+  *output = strdup(json_string);
+  if (*output == NULL)
+    goto done;
+
+  rc = U2FS_OK;
 done:
-    json_object_put(json_output);
-    json_object_put(json_challenge);
-    json_object_put(json_key);
-    json_object_put(json_version);
-    json_object_put(json_appid);
+  json_object_put(json_output);
+  json_object_put(json_challenge);
+  json_object_put(json_key);
+  json_object_put(json_version);
+  json_object_put(json_appid);
 
   return rc;
 }
@@ -1038,41 +1025,57 @@ parse_authentication_response(const char *response, char **signatureData,
   struct json_object *jo;
   struct json_object *k;
   const char *p;
+  u2fs_rc rc = U2FS_JSON_ERROR;
 
   jo = json_tokener_parse(response);
   if (jo == NULL)
     return U2FS_JSON_ERROR;
 
   if (u2fs_json_object_object_get(jo, "signatureData", k) == FALSE)
-    return U2FS_JSON_ERROR;
+    goto error;
   p = json_object_get_string(k);
   if (p == NULL)
-    return U2FS_JSON_ERROR;
+    goto error;
   *signatureData = strdup(p);
-  if (*signatureData == NULL)
-    return U2FS_MEMORY_ERROR;
+  if (*signatureData == NULL) {
+    rc = U2FS_MEMORY_ERROR;
+    goto error;
+  }
 
   if (u2fs_json_object_object_get(jo, "clientData", k) == FALSE)
-    return U2FS_JSON_ERROR;
+    goto error;
   p = json_object_get_string(k);
   if (p == NULL)
-    return U2FS_JSON_ERROR;
+    goto error;
   *clientData = strdup(p);
-  if (*clientData == NULL)
-    return U2FS_MEMORY_ERROR;
+  if (*clientData == NULL) {
+    rc = U2FS_MEMORY_ERROR;
+    goto error;
+  }
 
   if (u2fs_json_object_object_get(jo, "keyHandle", k) == FALSE)
-    return U2FS_JSON_ERROR;
+    goto error;
   p = json_object_get_string(k);
   if (p == NULL)
-    return U2FS_JSON_ERROR;
+    goto error;
   *keyHandle = strdup(p);
-  if (*keyHandle == NULL)
-    return U2FS_MEMORY_ERROR;
+  if (*keyHandle == NULL) {
+    rc = U2FS_MEMORY_ERROR;
+    goto error;
+  }
 
   json_object_put(jo);
-
   return U2FS_OK;
+
+error:
+  free(*signatureData);
+  *signatureData = NULL;
+  free(*clientData);
+  *clientData = NULL;
+  free(*keyHandle);
+  *keyHandle = NULL;
+
+  return rc;
 }
 
 /**

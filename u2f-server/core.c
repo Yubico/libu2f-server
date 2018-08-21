@@ -359,11 +359,7 @@ u2fs_rc u2fs_set_origin(u2fs_ctx_t * ctx, const char *origin)
   if (ctx == NULL || origin == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (ctx->origin != NULL) {
-    free(ctx->origin);
-    ctx->origin = NULL;
-  }
-
+  free(ctx->origin);
   ctx->origin = strdup(origin);
   if (ctx->origin == NULL)
     return U2FS_MEMORY_ERROR;
@@ -386,11 +382,7 @@ u2fs_rc u2fs_set_appid(u2fs_ctx_t * ctx, const char *appid)
   if (ctx == NULL || appid == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if (ctx->appid != NULL) {
-    free(ctx->appid);
-    ctx->appid = NULL;
-  }
-
+  free(ctx->appid);
   ctx->appid = strdup(appid);
   if (ctx->appid == NULL)
     return U2FS_MEMORY_ERROR;
@@ -498,7 +490,6 @@ parse_clientData(const char *clientData, char **challenge, char **origin)
   json_object_put(jo);
 
   return U2FS_OK;
-
 }
 
 /**
@@ -690,8 +681,6 @@ static u2fs_rc parse_registrationData(const char *registrationData,
                                attestation_certificate, signature);
 
   free(data);
-  data = NULL;
-
   return rc;
 }
 
@@ -712,14 +701,12 @@ static u2fs_rc decode_clientData(const char *clientData, char **output)
   base64_init_decodestate(&b64);
   base64_decode_block(clientData, clientData_len, data, &b64);
 
-  if (debug) {
+  if (debug)
     fprintf(stderr, "clientData: %s\n", data);
-  }
 
   *output = strndup(data, strlen(data));
 
   free(data);
-  data = NULL;
 
   if (*output == NULL) {
     fprintf(stderr, "Memory Error\n");
@@ -945,7 +932,7 @@ parse_signatureData2(const unsigned char *data, size_t len,
    */
 
   int offset = 0;
-  u2fs_rc rc;
+  size_t signature_len;
 
   if (len <= 1 + U2FS_COUNTER_LEN) {
     if (debug)
@@ -954,7 +941,6 @@ parse_signatureData2(const unsigned char *data, size_t len,
   }
 
   *user_presence = data[offset++] & 0x01;
-
   if (*user_presence == 0) {
     if (debug)
       fprintf(stderr, "User presence byte mismatch\n");
@@ -965,21 +951,14 @@ parse_signatureData2(const unsigned char *data, size_t len,
 
   offset += U2FS_COUNTER_LEN;
 
-  size_t signature_len = len - offset;
-  rc = decode_ECDSA(data + offset, signature_len, signature);
-
-  if (rc != U2FS_OK) {
-    return rc;
-  }
-
-  return U2FS_OK;
+  signature_len = len - offset;
+  return decode_ECDSA(data + offset, signature_len, signature);
 }
 
 static u2fs_rc
 parse_signatureData(const char *signatureData, uint8_t * user_presence,
                     uint32_t * counter, u2fs_ECDSA_t ** signature)
 {
-
   base64_decodestate b64;
   size_t signatureData_len = strlen(signatureData);
   unsigned char *data;
@@ -1006,8 +985,6 @@ parse_signatureData(const char *signatureData, uint8_t * user_presence,
                             signature);
 
   free(data);
-  data = NULL;
-
   return rc;
 }
 

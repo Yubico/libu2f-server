@@ -68,7 +68,6 @@ void crypto_release(void)
 
 u2fs_rc set_random_bytes(char *data, size_t len)
 {
-
   if (data == NULL)
     return U2FS_MEMORY_ERROR;
 
@@ -76,14 +75,13 @@ u2fs_rc set_random_bytes(char *data, size_t len)
     return U2FS_CRYPTO_ERROR;
 
   return U2FS_OK;
-
 }
 
 u2fs_rc decode_X509(const unsigned char *data, size_t len,
                     u2fs_X509_t ** cert)
 {
-
   const unsigned char *p;
+  unsigned long err;
 
   if (data == NULL || len == 0 || cert == NULL)
     return U2FS_MEMORY_ERROR;
@@ -94,7 +92,6 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len,
   *cert = (u2fs_X509_t *) d2i_X509(NULL, &p, len);
   if (*cert == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
@@ -109,8 +106,8 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len,
 u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
                      u2fs_ECDSA_t ** sig)
 {
-
   const unsigned char *p;
+  unsigned long err;
 
   if (data == NULL || len == 0 || sig == NULL)
     return U2FS_MEMORY_ERROR;
@@ -118,10 +115,8 @@ u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
   p = data;
 
   *sig = (u2fs_ECDSA_t *) d2i_ECDSA_SIG(NULL, &p, len);
-
   if (*sig == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
@@ -316,21 +311,22 @@ done:
   return rc;
 }
 
+//input: openssl X509 certificate
+//output: PEM-formatted char buffer
 u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
 {
-  //input: openssl X509 certificate
-  //output: PEM-formatted char buffer
+  BIO *bio = NULL;
 
   if (cert == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
   *output = NULL;
 
-  BIO *bio = BIO_new(BIO_s_mem());
+  bio = BIO_new(BIO_s_mem());
   if (bio == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if(!PEM_write_bio_X509(bio, (X509 *)cert)) {
+  if (!PEM_write_bio_X509(bio, (X509 *)cert)) {
     BIO_free(bio);
     return U2FS_CRYPTO_ERROR;
   }

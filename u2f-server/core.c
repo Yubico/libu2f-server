@@ -573,8 +573,12 @@ parse_registrationData2(const unsigned char *data, size_t len,
    */
 
   int offset = 0;
-  size_t attestation_certificate_len;
+  size_t attestation_certificate_len, signature_len;
   u2fs_rc rc;
+
+  *user_public_key = NULL;
+  *keyHandle = NULL;
+  *keyHandle_len = 0;
 
   if (len <= 1 + 65 + 1 + 64) {
     if (debug)
@@ -589,11 +593,10 @@ parse_registrationData2(const unsigned char *data, size_t len,
   }
 
   *user_public_key = calloc(sizeof(unsigned char), U2FS_PUBLIC_KEY_LEN);
-
   if (*user_public_key == NULL) {
     if (debug)
       fprintf(stderr, "Memory error\n");
-    return U2FS_MEMORY_ERROR;
+    goto fail;
   }
 
   memcpy(*user_public_key, data + offset, U2FS_PUBLIC_KEY_LEN);
@@ -603,22 +606,13 @@ parse_registrationData2(const unsigned char *data, size_t len,
   *keyHandle_len = data[offset++];
 
   *keyHandle = calloc(sizeof(char), *keyHandle_len);
-  if (*keyHandle == NULL)
-    return U2FS_MEMORY_ERROR;
-
-  memcpy(*keyHandle, data + offset, *keyHandle_len);
-
   if (*keyHandle == NULL) {
     if (debug)
       fprintf(stderr, "Memory error\n");
-
-    free(*user_public_key);
-
-    keyHandle_len = 0;
-    *user_public_key = NULL;
-
-    return U2FS_MEMORY_ERROR;
+    goto fail;
   }
+
+  memcpy(*keyHandle, data + offset, *keyHandle_len);
 
   if (debug)
     fprintf(stderr, "Key handle length: %d\n", (int) *keyHandle_len);
@@ -632,34 +626,33 @@ parse_registrationData2(const unsigned char *data, size_t len,
 
   rc = decode_X509(data + offset, attestation_certificate_len,
                    attestation_certificate);
-
-  if (rc != U2FS_OK) {
-    return rc;
-  }
+  if (rc != U2FS_OK)
+    goto fail;
 
   if (debug)
     dumpCert(*attestation_certificate);
 
   offset += attestation_certificate_len;
 
-  size_t signature_len = len - offset;
+  signature_len = len - offset;
   rc = decode_ECDSA(data + offset, signature_len, signature);
-
   if (rc != U2FS_OK) {
-    free(*user_public_key);
-    free(*keyHandle);
-
-    *user_public_key = NULL;
-    *keyHandle_len = 0;
-    *keyHandle = NULL;
-
     if (debug)
       fprintf(stderr, "Unable to decode signature\n");
-
-    return rc;
+    goto fail;
   }
 
   return U2FS_OK;
+
+fail:
+  free(*user_public_key);
+  *user_public_key = NULL;
+  free(*keyHandle);
+  *keyHandle = NULL;
+  *keyHandle_len = 0;
+  if (rc == U2FS_OK)
+    rc = U2FS_MEMORY_ERROR;
+  return rc;
 }
 
 static u2fs_rc parse_registrationData(const char *registrationData,

@@ -185,26 +185,23 @@ done:
 u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,
                      const u2fs_ECDSA_t * sig, u2fs_EC_KEY_t * eckey)
 {
+  unsigned long err;
+  int rc;
+
   if (dgst == NULL || dgst_len == 0 || sig == NULL || eckey == NULL)
     return U2FS_MEMORY_ERROR;
 
-  int rc =
-      ECDSA_do_verify(dgst, dgst_len, (ECDSA_SIG *) sig, (EC_KEY *) eckey);
-
-  if (rc != 1) {
-    if (rc == -1) {
-      if (debug) {
-        unsigned long err = 0;
-        err = ERR_get_error();
-        fprintf(stderr, "Error: %s, %s, %s\n",
-                ERR_lib_error_string(err),
-                ERR_func_error_string(err), ERR_reason_error_string(err));
-      }
-      return U2FS_CRYPTO_ERROR;
-    } else {
-      return U2FS_SIGNATURE_ERROR;
+  rc = ECDSA_do_verify(dgst, dgst_len, (ECDSA_SIG *) sig, (EC_KEY *) eckey);
+  if (rc == -1) {
+    if (debug) {
+      err = ERR_get_error();
+      fprintf(stderr, "Error: %s, %s, %s\n",
+              ERR_lib_error_string(err),
+              ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-  }
+    return U2FS_CRYPTO_ERROR;
+  } else if (rc != 1)
+    return U2FS_SIGNATURE_ERROR;
 
   return U2FS_OK;
 }

@@ -135,55 +135,51 @@ u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
 
 u2fs_rc decode_user_key(const unsigned char *data, u2fs_EC_KEY_t ** key)
 {
+  EC_GROUP *ecg = NULL;
+  EC_POINT *point = NULL;
+  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  unsigned long err;
+  u2fs_rc rc = U2FS_CRYPTO_ERROR;
 
   if (key == NULL)
     return U2FS_MEMORY_ERROR;
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
   *key = (u2fs_EC_KEY_t *) EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
 
-  EC_POINT *point = EC_POINT_new(ecg);
-  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  point = EC_POINT_new(ecg);
   EC_GROUP_set_point_conversion_form(ecg, pcf);
 
   if (EC_POINT_oct2point(ecg, point, data, U2FS_PUBLIC_KEY_LEN, NULL) == 0) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    *key = NULL;
-    EC_GROUP_free(ecg);
-    ecg = NULL;
-    EC_POINT_free(point);
-    point = NULL;
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
-
-  EC_GROUP_free(ecg);
-  ecg = NULL;
 
   if (EC_KEY_set_public_key((EC_KEY *) * key, point) == 0) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    *key = NULL;
-    EC_POINT_free(point);
-    point = NULL;
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
+  rc = U2FS_OK;
+done:
+  EC_GROUP_free(ecg);
   EC_POINT_free(point);
-  point = NULL;
 
-  return U2FS_OK;
-
+  if (rc != U2FS_OK) {
+    EC_KEY_free((EC_KEY *)*key);
+    *key = NULL;
+  }
+  return rc;
 }
 
 u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,

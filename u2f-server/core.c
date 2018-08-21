@@ -35,7 +35,6 @@
 #include "crypto.h"
 #include "b64/cencode.h"
 #include "b64/cdecode.h"
-#include "sha256.h"
 
 #ifdef HAVE_JSON_OBJECT_OBJECT_GET_EX
 #define u2fs_json_object_object_get(obj, key, value) json_object_object_get_ex(obj, key, &value)
@@ -739,7 +738,7 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   u2fs_X509_t *attestation_certificate = NULL;
   u2fs_ECDSA_t *signature = NULL;
   u2fs_EC_KEY_t *key = NULL, *key_ptr = NULL;
-  struct sha256_state sha_ctx;
+  EVP_MD_CTX *sha_ctx = NULL;
   char challenge_parameter[U2FS_HASH_LEN],
     application_parameter[U2FS_HASH_LEN];
   unsigned char dgst[U2FS_HASH_LEN];
@@ -797,12 +796,16 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) ctx->appid,
                  strlen(ctx->appid));
-  sha256_done(&sha_ctx, (unsigned char *) application_parameter);
+  rc = sha256_done(&sha_ctx, (unsigned char *) application_parameter);
+  if (rc != U2FS_OK)
+    goto done;
 
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) clientData_decoded,
                  strlen(clientData_decoded));
-  sha256_done(&sha_ctx, (unsigned char *) challenge_parameter);
+  rc = sha256_done(&sha_ctx, (unsigned char *) challenge_parameter);
+  if (rc != U2FS_OK)
+    goto done;  
 
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, &c, 1);
@@ -812,7 +815,9 @@ u2fs_rc u2fs_registration_verify(u2fs_ctx_t * ctx, const char *response,
                  U2FS_HASH_LEN);
   sha256_process(&sha_ctx, (unsigned char *) keyHandle, keyHandle_len);
   sha256_process(&sha_ctx, user_public_key, U2FS_PUBLIC_KEY_LEN);
-  sha256_done(&sha_ctx, dgst);
+  rc = sha256_done(&sha_ctx, dgst);
+  if (rc != U2FS_OK)
+    goto done;
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, key);
   if (rc != U2FS_OK)
@@ -1068,7 +1073,7 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   uint32_t counter;
   u2fs_ECDSA_t *signature = NULL;
   u2fs_rc rc;
-  struct sha256_state sha_ctx;
+  EVP_MD_CTX *sha_ctx = NULL;
   char challenge_parameter[U2FS_HASH_LEN],
     application_parameter[U2FS_HASH_LEN];
   unsigned char dgst[U2FS_HASH_LEN];
@@ -1116,12 +1121,16 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) ctx->appid,
                  strlen(ctx->appid));
-  sha256_done(&sha_ctx, (unsigned char *) application_parameter);
+  rc = sha256_done(&sha_ctx, (unsigned char *) application_parameter);
+  if (rc != U2FS_OK)
+    goto done;
 
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) clientData_decoded,
                  strlen(clientData_decoded));
-  sha256_done(&sha_ctx, (unsigned char *) challenge_parameter);
+  rc = sha256_done(&sha_ctx, (unsigned char *) challenge_parameter);
+  if (rc != U2FS_OK)
+    goto done;  
 
   sha256_init(&sha_ctx);
   sha256_process(&sha_ctx, (unsigned char *) application_parameter,
@@ -1130,7 +1139,9 @@ u2fs_rc u2fs_authentication_verify(u2fs_ctx_t * ctx, const char *response,
   sha256_process(&sha_ctx, (unsigned char *) &counter, U2FS_COUNTER_LEN);
   sha256_process(&sha_ctx, (unsigned char *) challenge_parameter,
                  U2FS_HASH_LEN);
-  sha256_done(&sha_ctx, dgst);
+  rc = sha256_done(&sha_ctx, dgst);
+  if (rc != U2FS_OK)
+    goto done;
 
   rc = verify_ECDSA(dgst, U2FS_HASH_LEN, signature, ctx->key);
   if (rc != U2FS_OK)

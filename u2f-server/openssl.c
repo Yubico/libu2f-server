@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 Yubico AB
+* Copyright (c) 2014,2018 Yubico AB
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,70 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+
+void sha256_init(EVP_MD_CTX **ctx)
+{
+  int oret;
+
+  if (!ctx)
+    return;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+  *ctx = EVP_MD_CTX_create();
+#else
+  *ctx = EVP_MD_CTX_new();
+#endif
+
+  oret = EVP_DigestInit(*ctx, EVP_sha256());
+  if (oret != 1)
+    sha256_done(ctx, NULL);
+
+  return;
+}
+
+void sha256_process(EVP_MD_CTX **ctx, const void *data, size_t len)
+{
+  int oret;
+
+  if (ctx == NULL || *ctx == NULL)
+    return;
+
+  oret = EVP_DigestUpdate(*ctx, data, len);
+  if (oret != 1)
+    sha256_done(ctx, NULL);
+
+  return;
+}
+
+/*
+ * Finish sha256 operation and destroy context.  If out is not NULL, on
+ * success it will be filled with the resulting digest.  Failures are
+ * accumulated from sha256_init() and sha256_process().
+*/
+u2fs_rc sha256_done(EVP_MD_CTX **ctx, unsigned char *out)
+{
+  unsigned char md_value[EVP_MAX_MD_SIZE];
+  int oret;
+
+  if (ctx == NULL || *ctx == NULL)
+    return U2FS_CRYPTO_ERROR;
+
+  if (out == NULL) {
+    /* cleanup context in an openssl-version-agnostic way */
+    EVP_DigestFinal(*ctx, md_value, NULL);
+    *ctx = NULL;
+    return U2FS_OK;
+  }
+
+  oret = EVP_DigestFinal(*ctx, md_value, NULL);
+  *ctx = NULL;
+  if (oret != 1)
+    return U2FS_CRYPTO_ERROR;
+
+  strncpy((char *)out, (char *)md_value, _SHA256_LEN);
+
+  return U2FS_OK;
+}
 
 void dumpCert(const u2fs_X509_t * certificate)
 {

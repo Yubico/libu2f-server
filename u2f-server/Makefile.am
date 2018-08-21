@@ -38,7 +38,6 @@ libu2f_server_la_SOURCES += internal.h
 libu2f_server_la_SOURCES += u2f-server.pc.in u2f-server.map
 libu2f_server_la_SOURCES += global.c version.c error.c
 libu2f_server_la_SOURCES += core.c
-libu2f_server_la_SOURCES += sha256.h sha256.c
 libu2f_server_la_SOURCES += cencode.c cdecode.c b64/cencode.h b64/cdecode.h
 libu2f_server_la_SOURCES += crypto.h
 libu2f_server_la_SOURCES += openssl.c

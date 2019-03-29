@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      len = fread(buf, sizeof(char), BUFSIZ, fp);
+      len = fread(buf, sizeof(char), sizeof(buf) - 1, fp);
       buf[len] = '\0';
       if (len == 0 && !feof(stdin)
           && ferror(stdin)) {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
       }
 
-      len = fread(buf, sizeof(char), BUFSIZ, fp);
+      len = fread(buf, sizeof(char), sizeof(buf) - 1, fp);
       buf[len] = '\0';
       if (len == 0 && !feof(stdin)
           && ferror(stdin)) {
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
     goto done;
   }
   printf("%s\n", p);
-  len = fread(buf, 1, sizeof(buf), stdin);
+  len = fread(buf, 1, sizeof(buf) - 1, stdin);
   buf[len] = '\0';
   if (len == 0 && !feof(stdin)
       && ferror(stdin)) {

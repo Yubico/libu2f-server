@@ -16,6 +16,10 @@ Authentication operations, and functionality for verifying the
 cryptographic operations.  For the host-side aspect, see our
 https://developers.yubico.com/libu2f-host/[libu2f-host project].
 
+NOTE: This project is in maintenance mode,
+https://developers.yubico.com/libfido2/[libfido2] is a new project with
+support for U2F and FIDO2.
+
 Warning and Known limitation: Attestation Certificate validation
 ----------------------------------------------------------------
 

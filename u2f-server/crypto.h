@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 Yubico AB
+* Copyright (c) 2014,2018 Yubico AB
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,8 @@
 
 #ifndef U2FS_CRYPTO_H
 #define U2FS_CRYPTO_H
+
+#include <openssl/evp.h>
 
 #include "internal.h"
 
@@ -64,5 +66,9 @@ u2fs_X509_t *dup_cert(const u2fs_X509_t * cert);
 
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output);
 u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output);
+
+void sha256_init(EVP_MD_CTX **ctx);
+void sha256_process(EVP_MD_CTX **ctx, const void *data, size_t len);
+u2fs_rc sha256_done(EVP_MD_CTX **ctx, unsigned char *out);
 
 #endif

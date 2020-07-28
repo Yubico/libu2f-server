@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 Yubico AB
+* Copyright (c) 2014,2018 Yubico AB
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,70 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 
+void sha256_init(EVP_MD_CTX **ctx)
+{
+  int oret;
+
+  if (!ctx)
+    return;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+  *ctx = EVP_MD_CTX_create();
+#else
+  *ctx = EVP_MD_CTX_new();
+#endif
+
+  oret = EVP_DigestInit(*ctx, EVP_sha256());
+  if (oret != 1)
+    sha256_done(ctx, NULL);
+
+  return;
+}
+
+void sha256_process(EVP_MD_CTX **ctx, const void *data, size_t len)
+{
+  int oret;
+
+  if (ctx == NULL || *ctx == NULL)
+    return;
+
+  oret = EVP_DigestUpdate(*ctx, data, len);
+  if (oret != 1)
+    sha256_done(ctx, NULL);
+
+  return;
+}
+
+/*
+ * Finish sha256 operation and destroy context.  If out is not NULL, on
+ * success it will be filled with the resulting digest.  Failures are
+ * accumulated from sha256_init() and sha256_process().
+*/
+u2fs_rc sha256_done(EVP_MD_CTX **ctx, unsigned char *out)
+{
+  unsigned char md_value[EVP_MAX_MD_SIZE];
+  int oret;
+
+  if (ctx == NULL || *ctx == NULL)
+    return U2FS_CRYPTO_ERROR;
+
+  if (out == NULL) {
+    /* cleanup context in an openssl-version-agnostic way */
+    EVP_DigestFinal(*ctx, md_value, NULL);
+    *ctx = NULL;
+    return U2FS_OK;
+  }
+
+  oret = EVP_DigestFinal(*ctx, md_value, NULL);
+  *ctx = NULL;
+  if (oret != 1)
+    return U2FS_CRYPTO_ERROR;
+
+  strncpy((char *)out, (char *)md_value, _SHA256_LEN);
+
+  return U2FS_OK;
+}
+
 void dumpCert(const u2fs_X509_t * certificate)
 {
   X509 *cert = (X509 *) certificate;
@@ -68,7 +132,6 @@ void crypto_release(void)
 
 u2fs_rc set_random_bytes(char *data, size_t len)
 {
-
   if (data == NULL)
     return U2FS_MEMORY_ERROR;
 
@@ -76,14 +139,13 @@ u2fs_rc set_random_bytes(char *data, size_t len)
     return U2FS_CRYPTO_ERROR;
 
   return U2FS_OK;
-
 }
 
 u2fs_rc decode_X509(const unsigned char *data, size_t len,
                     u2fs_X509_t ** cert)
 {
-
   const unsigned char *p;
+  unsigned long err;
 
   if (data == NULL || len == 0 || cert == NULL)
     return U2FS_MEMORY_ERROR;
@@ -94,7 +156,6 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len,
   *cert = (u2fs_X509_t *) d2i_X509(NULL, &p, len);
   if (*cert == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
@@ -109,8 +170,8 @@ u2fs_rc decode_X509(const unsigned char *data, size_t len,
 u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
                      u2fs_ECDSA_t ** sig)
 {
-
   const unsigned char *p;
+  unsigned long err;
 
   if (data == NULL || len == 0 || sig == NULL)
     return U2FS_MEMORY_ERROR;
@@ -118,10 +179,8 @@ u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
   p = data;
 
   *sig = (u2fs_ECDSA_t *) d2i_ECDSA_SIG(NULL, &p, len);
-
   if (*sig == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
@@ -135,80 +194,73 @@ u2fs_rc decode_ECDSA(const unsigned char *data, size_t len,
 
 u2fs_rc decode_user_key(const unsigned char *data, u2fs_EC_KEY_t ** key)
 {
+  EC_GROUP *ecg = NULL;
+  EC_POINT *point = NULL;
+  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  unsigned long err;
+  u2fs_rc rc = U2FS_CRYPTO_ERROR;
 
   if (key == NULL)
     return U2FS_MEMORY_ERROR;
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
   *key = (u2fs_EC_KEY_t *) EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
 
-  EC_POINT *point = EC_POINT_new(ecg);
-  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  point = EC_POINT_new(ecg);
   EC_GROUP_set_point_conversion_form(ecg, pcf);
 
   if (EC_POINT_oct2point(ecg, point, data, U2FS_PUBLIC_KEY_LEN, NULL) == 0) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    *key = NULL;
-    EC_GROUP_free(ecg);
-    ecg = NULL;
-    EC_POINT_free(point);
-    point = NULL;
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
-
-  EC_GROUP_free(ecg);
-  ecg = NULL;
 
   if (EC_KEY_set_public_key((EC_KEY *) * key, point) == 0) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    *key = NULL;
-    EC_POINT_free(point);
-    point = NULL;
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
+  rc = U2FS_OK;
+done:
+  EC_GROUP_free(ecg);
   EC_POINT_free(point);
-  point = NULL;
 
-  return U2FS_OK;
-
+  if (rc != U2FS_OK) {
+    EC_KEY_free((EC_KEY *)*key);
+    *key = NULL;
+  }
+  return rc;
 }
 
 u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,
                      const u2fs_ECDSA_t * sig, u2fs_EC_KEY_t * eckey)
 {
+  unsigned long err;
+  int rc;
+
   if (dgst == NULL || dgst_len == 0 || sig == NULL || eckey == NULL)
     return U2FS_MEMORY_ERROR;
 
-  int rc =
-      ECDSA_do_verify(dgst, dgst_len, (ECDSA_SIG *) sig, (EC_KEY *) eckey);
-
-  if (rc != 1) {
-    if (rc == -1) {
-      if (debug) {
-        unsigned long err = 0;
-        err = ERR_get_error();
-        fprintf(stderr, "Error: %s, %s, %s\n",
-                ERR_lib_error_string(err),
-                ERR_func_error_string(err), ERR_reason_error_string(err));
-      }
-      return U2FS_CRYPTO_ERROR;
-    } else {
-      return U2FS_SIGNATURE_ERROR;
+  rc = ECDSA_do_verify(dgst, dgst_len, (ECDSA_SIG *) sig, (EC_KEY *) eckey);
+  if (rc == -1) {
+    if (debug) {
+      err = ERR_get_error();
+      fprintf(stderr, "Error: %s, %s, %s\n",
+              ERR_lib_error_string(err),
+              ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-  }
+    return U2FS_CRYPTO_ERROR;
+  } else if (rc != 1)
+    return U2FS_SIGNATURE_ERROR;
 
   return U2FS_OK;
 }
@@ -216,47 +268,47 @@ u2fs_rc verify_ECDSA(const unsigned char *dgst, int dgst_len,
 u2fs_rc extract_EC_KEY_from_X509(const u2fs_X509_t * cert,
                                  u2fs_EC_KEY_t ** key)
 {
+  EVP_PKEY *pkey = NULL;
+  EC_GROUP *ecg = NULL;
+  unsigned long err;
+  u2fs_rc rc = U2FS_CRYPTO_ERROR;
+
   if (cert == NULL || key == NULL)
     return U2FS_MEMORY_ERROR;
 
-  EVP_PKEY *pkey = X509_get_pubkey((X509 *) cert);
-
+  pkey = X509_get_pubkey((X509 *) cert);
   if (pkey == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
   *key = (u2fs_EC_KEY_t *) EVP_PKEY_get1_EC_KEY(pkey);
-
-  EVP_PKEY_free(pkey);
-  pkey = NULL;
-
   if (*key == NULL) {
     if (debug) {
-      unsigned long err = 0;
       err = ERR_get_error();
       fprintf(stderr, "Error: %s, %s, %s\n",
               ERR_lib_error_string(err),
               ERR_func_error_string(err), ERR_reason_error_string(err));
     }
-    return U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
 
   EC_KEY_set_asn1_flag((EC_KEY *) * key, OPENSSL_EC_NAMED_CURVE);
   EC_KEY_set_group((EC_KEY *) * key, ecg);
 
+  rc = U2FS_OK;
+done:
   EC_GROUP_free(ecg);
-  ecg = NULL;
-
-  return U2FS_OK;
+  if (rc != U2FS_OK)
+    *key = NULL;
+  return rc;
 }
 
 u2fs_EC_KEY_t *dup_key(const u2fs_EC_KEY_t * key)
@@ -284,61 +336,61 @@ void free_sig(u2fs_ECDSA_t * sig)
   ECDSA_SIG_free((ECDSA_SIG *) sig);
 }
 
+//TODO add PEM - current output is openssl octet string
 u2fs_rc dump_user_key(const u2fs_EC_KEY_t * key, char **output)
 {
-  //TODO add PEM - current output is openssl octet string
+  EC_GROUP *ecg = NULL;
+  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
+  const EC_POINT *point;
+  u2fs_rc rc = U2FS_MEMORY_ERROR;
 
   if (key == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
+  *output = NULL;
 
-  EC_GROUP *ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
-  point_conversion_form_t pcf = POINT_CONVERSION_UNCOMPRESSED;
-
+  ecg = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1);
   if (ecg == NULL)
-    return U2FS_MEMORY_ERROR;
+    goto done;
 
-  const EC_POINT *point = EC_KEY_get0_public_key((EC_KEY *) key);
+  point = EC_KEY_get0_public_key((EC_KEY *) key);
 
   *output = malloc(U2FS_PUBLIC_KEY_LEN);
-
-  if (*output == NULL) {
-    EC_GROUP_free(ecg);
-    ecg = NULL;
-    return U2FS_MEMORY_ERROR;
-  }
+  if (*output == NULL)
+    goto done;
 
   if (EC_POINT_point2oct
       (ecg, point, pcf, (unsigned char *) *output, U2FS_PUBLIC_KEY_LEN,
        NULL) != U2FS_PUBLIC_KEY_LEN) {
-    free(ecg);
-    ecg = NULL;
-    free(*output);
-    *output = NULL;
-    return U2FS_CRYPTO_ERROR;
+    rc = U2FS_CRYPTO_ERROR;
+    goto done;
   }
 
+  rc = U2FS_OK;
+done:
   EC_GROUP_free(ecg);
-  ecg = NULL;
-
-  return U2FS_OK;
-
+  if (rc != U2FS_OK) {
+    free(*output);
+    *output = NULL;
+  }
+  return rc;
 }
 
+//input: openssl X509 certificate
+//output: PEM-formatted char buffer
 u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
 {
-  //input: openssl X509 certificate
-  //output: PEM-formatted char buffer
+  BIO *bio = NULL;
 
   if (cert == NULL || output == NULL)
     return U2FS_MEMORY_ERROR;
 
   *output = NULL;
 
-  BIO *bio = BIO_new(BIO_s_mem());
+  bio = BIO_new(BIO_s_mem());
   if (bio == NULL)
     return U2FS_MEMORY_ERROR;
 
-  if(!PEM_write_bio_X509(bio, (X509 *)cert)) {
+  if (!PEM_write_bio_X509(bio, (X509 *)cert)) {
     BIO_free(bio);
     return U2FS_CRYPTO_ERROR;
   }
@@ -362,7 +414,6 @@ u2fs_rc dump_X509_cert(const u2fs_X509_t * cert, char **output)
 
 START_TEST(test_errors)
 {
-
   u2fs_X509_t *cert = NULL;
   u2fs_ECDSA_t *sig = NULL;
   u2fs_EC_KEY_t *key = NULL;
@@ -399,15 +450,11 @@ START_TEST(test_errors)
   ck_assert_int_eq(decode_ECDSA(some_data, 5, &sig), U2FS_CRYPTO_ERROR);
   ck_assert_int_eq(decode_user_key(wrong_key, &key), U2FS_CRYPTO_ERROR);
 
-  //ck_assert_int_eq(dump_user_key(key, &output), U2FS_CRYPTO_ERROR);
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
-  //ck_assert_int_eq(extract_EC_KEY_from_X509(cert, &key), U2FS_CRYPTO_ERROR);
-
 }
 
 END_TEST START_TEST(test_dup_key)
 {
-
   u2fs_EC_KEY_t *key = NULL;
   u2fs_EC_KEY_t *key2 = NULL;
 
@@ -423,8 +470,6 @@ END_TEST START_TEST(test_dup_key)
   ck_assert_int_eq(decode_user_key(userkey_dat, &key), U2FS_OK);
   key2 = dup_key(key);
   ck_assert(key2 != NULL);
-  //ck_assert(memcmp(key, key2, sizeof(key)));
-
 }
 
 END_TEST Suite *u2fs_crypto_suite(void)
@@ -446,7 +491,6 @@ END_TEST Suite *u2fs_crypto_suite(void)
 
 int main(void)
 {
-
   int number_failed;
   Suite *s;
   SRunner *sr;
@@ -458,8 +502,5 @@ int main(void)
   number_failed = srunner_ntests_failed(sr);
   srunner_free(sr);
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-
-  return 0;
-
 }
 #endif
